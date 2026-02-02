@@ -1,0 +1,58 @@
+plugins:
+  custom_plugin_enabled:
+    default: true
+    client: true
+  
+  # 签到系统设置
+  checkin_enabled:
+    default: true
+    client: true
+  checkin_base_points:
+    default: 10
+    min: 1
+    max: 100
+  checkin_consecutive_bonus:
+    default: 5
+    min: 0
+    max: 50
+  checkin_lottery_enabled:
+    default: true
+    client: true
+  checkin_lottery_prizes:
+    default: "10积分|50积分|100积分|神秘大奖"
+    type: list
+    list_type: simple
+  checkin_lottery_probabilities:
+    default: "50|30|15|5"
+    type: list
+    list_type: simple
+  
+  # To Do List 设置
+  todo_enabled:
+    default: true
+    client: true
+  todo_max_items:
+    default: 50
+    min: 10
+    max: 200
+  
+  # 徽章墙设置
+  badge_wall_enabled:
+    default: true
+    client: true
+  badge_wall_public:
+    default: true
+    client: true
+  
+  # 自定义表情设置
+  custom_emoji_enabled:
+    default: true
+    client: true
+  custom_emoji_max_per_user:
+    default: 20
+    min: 5
+    max: 100
+  custom_emoji_max_size_kb:
+    default: 256
+    min: 64
+    max: 1024

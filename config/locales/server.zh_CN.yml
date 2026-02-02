@@ -1,0 +1,41 @@
+zh_CN:
+  site_settings:
+    custom_plugin_enabled: "启用自定义插件"
+    checkin_enabled: "启用每日签到功能"
+    checkin_base_points: "签到基础积分"
+    checkin_consecutive_bonus: "连续签到额外奖励积分"
+    checkin_lottery_enabled: "启用签到抽奖功能"
+    checkin_lottery_prizes: "抽奖奖品列表（用|分隔）"
+    checkin_lottery_probabilities: "抽奖概率列表（用|分隔，总和应为100）"
+    todo_enabled: "启用待办清单功能"
+    todo_max_items: "每用户最大待办数量"
+    badge_wall_enabled: "启用徽章墙功能"
+    badge_wall_public: "徽章墙对所有人可见"
+    custom_emoji_enabled: "启用自定义表情包功能"
+    custom_emoji_max_per_user: "每用户最大表情数量"
+    custom_emoji_max_size_kb: "表情图片最大大小(KB)"
+  
+  discourse_custom_plugin:
+    checkin:
+      success: "签到成功！获得 %{points} 积分"
+      already_checked_in: "今天已经签到过了"
+      consecutive_bonus: "连续签到 %{days} 天，额外获得 %{bonus} 积分"
+      lottery_win: "恭喜您抽中了：%{prize}"
+      lottery_no_chance: "今天的抽奖机会已用完"
+    
+    todo:
+      created: "待办事项已创建"
+      updated: "待办事项已更新"
+      deleted: "待办事项已删除"
+      max_reached: "已达到最大待办数量限制"
+    
+    badge_wall:
+      collected: "徽章已收藏"
+      already_collected: "该徽章已在收藏中"
+      not_earned: "您尚未获得该徽章"
+    
+    custom_emoji:
+      uploaded: "表情包已上传"
+      deleted: "表情包已删除"
+      max_reached: "已达到最大表情数量限制"
+      file_too_large: "文件大小超过限制"

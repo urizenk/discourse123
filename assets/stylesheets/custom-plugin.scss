@@ -1,0 +1,638 @@
+// ==========================================
+// Custom Plugin Styles
+// ==========================================
+
+// ==========================================
+// 签到系统样式
+// ==========================================
+
+.checkin-panel {
+  background: var(--secondary);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  
+  .checkin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .consecutive-badge {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+  
+  .checkin-button {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &.can-checkin {
+      background: linear-gradient(135deg, #228B22, #32CD32);
+      color: #fff;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(34, 139, 34, 0.4);
+      }
+    }
+    
+    &.checked-in {
+      background: var(--primary-low);
+      color: var(--primary-medium);
+      cursor: default;
+    }
+  }
+  
+  .checkin-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+    
+    .stat-item {
+      text-align: center;
+      padding: 12px;
+      background: var(--primary-very-low);
+      border-radius: 8px;
+      
+      .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--tertiary);
+      }
+      
+      .stat-label {
+        font-size: 12px;
+        color: var(--primary-medium);
+        margin-top: 4px;
+      }
+    }
+  }
+  
+  .checkin-calendar {
+    margin-top: 20px;
+    
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      
+      .month-title {
+        font-weight: 600;
+      }
+    }
+    
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      
+      .day-cell {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 12px;
+        
+        &.checked {
+          background: #228B22;
+          color: #fff;
+        }
+        
+        &.today {
+          border: 2px solid var(--tertiary);
+        }
+      }
+    }
+  }
+}
+
+// ==========================================
+// 抽奖模块样式
+// ==========================================
+
+.lottery-panel {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  padding: 24px;
+  color: #fff;
+  margin-top: 20px;
+  
+  .lottery-header {
+    text-align: center;
+    margin-bottom: 20px;
+    
+    h4 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+    
+    p {
+      margin: 0;
+      opacity: 0.8;
+      font-size: 14px;
+    }
+  }
+  
+  .lottery-wheel {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: conic-gradient(
+      #FFD700 0deg 90deg,
+      #FF6B6B 90deg 180deg,
+      #4ECDC4 180deg 270deg,
+      #45B7D1 270deg 360deg
+    );
+    position: relative;
+    
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      background: #fff;
+      border-radius: 50%;
+    }
+  }
+  
+  .lottery-button {
+    width: 100%;
+    padding: 14px;
+    background: #FFD700;
+    color: #333;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover:not(:disabled) {
+      transform: scale(1.02);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+  
+  .lottery-prizes {
+    margin-top: 20px;
+    
+    .prize-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      
+      .prize-tag {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+// ==========================================
+// To Do List 样式
+// ==========================================
+
+.todo-panel {
+  background: var(--secondary);
+  border-radius: 12px;
+  padding: 24px;
+  
+  .todo-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    
+    .tab {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--primary-very-low);
+      color: var(--primary);
+      border: none;
+      transition: all 0.2s ease;
+      
+      &.active {
+        background: var(--tertiary);
+        color: #fff;
+      }
+    }
+  }
+  
+  .todo-input {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    
+    input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid var(--primary-low);
+      border-radius: 8px;
+      font-size: 14px;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--tertiary);
+      }
+    }
+    
+    button {
+      padding: 12px 20px;
+      background: var(--tertiary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+  
+  .todo-list {
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--primary-very-low);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: var(--primary-low);
+      }
+      
+      &.completed {
+        opacity: 0.6;
+        
+        .todo-title {
+          text-decoration: line-through;
+        }
+      }
+      
+      .todo-checkbox {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--primary-medium);
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &.checked {
+          background: #228B22;
+          border-color: #228B22;
+          
+          svg {
+            fill: #fff;
+          }
+        }
+      }
+      
+      .todo-title {
+        flex: 1;
+        font-size: 14px;
+      }
+      
+      .todo-actions {
+        display: flex;
+        gap: 8px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        
+        button {
+          padding: 4px 8px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: var(--primary-medium);
+          
+          &:hover {
+            color: var(--danger);
+          }
+        }
+      }
+      
+      &:hover .todo-actions {
+        opacity: 1;
+      }
+      
+      .priority-badge {
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        
+        &.priority-1 {
+          background: #FFA500;
+          color: #fff;
+        }
+        
+        &.priority-2 {
+          background: #FF4444;
+          color: #fff;
+        }
+      }
+    }
+  }
+  
+  .todo-empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--primary-medium);
+    
+    svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+  }
+}
+
+// ==========================================
+// 徽章墙样式
+// ==========================================
+
+.badge-wall {
+  .badge-wall-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    
+    h2 {
+      margin: 0;
+    }
+    
+    .progress-bar {
+      width: 200px;
+      height: 8px;
+      background: var(--primary-low);
+      border-radius: 4px;
+      overflow: hidden;
+      
+      .progress {
+        height: 100%;
+        background: linear-gradient(90deg, #228B22, #32CD32);
+        transition: width 0.3s ease;
+      }
+    }
+  }
+  
+  .badge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 16px;
+  }
+  
+  .badge-card {
+    background: var(--secondary);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    &.earned {
+      border-color: #228B22;
+      
+      .badge-icon {
+        filter: none;
+      }
+    }
+    
+    &.not-earned {
+      opacity: 0.5;
+      
+      .badge-icon {
+        filter: grayscale(100%);
+      }
+    }
+    
+    &.collected {
+      background: linear-gradient(135deg, #f0fff0, #e8f5e9);
+    }
+    
+    .badge-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 12px;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+    
+    .badge-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    
+    .badge-status {
+      font-size: 10px;
+      color: var(--primary-medium);
+    }
+    
+    .collect-button {
+      margin-top: 8px;
+      padding: 4px 12px;
+      background: var(--tertiary);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}
+
+// ==========================================
+// 自定义表情样式
+// ==========================================
+
+.custom-emoji-panel {
+  background: var(--secondary);
+  border-radius: 12px;
+  padding: 24px;
+  
+  .emoji-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    h3 {
+      margin: 0;
+    }
+    
+    .emoji-count {
+      font-size: 14px;
+      color: var(--primary-medium);
+    }
+  }
+  
+  .emoji-upload {
+    border: 2px dashed var(--primary-low);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: var(--tertiary);
+      background: var(--tertiary-very-low);
+    }
+    
+    svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      color: var(--primary-medium);
+    }
+    
+    p {
+      margin: 0;
+      color: var(--primary-medium);
+      font-size: 14px;
+    }
+    
+    .size-hint {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+  }
+  
+  .emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 12px;
+  }
+  
+  .emoji-item {
+    position: relative;
+    background: var(--primary-very-low);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    
+    &:hover .emoji-delete {
+      opacity: 1;
+    }
+    
+    img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+    
+    .emoji-name {
+      font-size: 10px;
+      color: var(--primary-medium);
+      margin-top: 8px;
+      word-break: break-all;
+    }
+    
+    .emoji-delete {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+  }
+}
+
+// ==========================================
+// 响应式适配
+// ==========================================
+
+@media (max-width: 768px) {
+  .checkin-panel,
+  .todo-panel,
+  .custom-emoji-panel {
+    padding: 16px;
+  }
+  
+  .checkin-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .badge-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  
+  .badge-card .badge-icon {
+    width: 48px;
+    height: 48px;
+  }
+}

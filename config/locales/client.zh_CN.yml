@@ -1,0 +1,54 @@
+zh_CN:
+  js:
+    custom_plugin:
+      title: "个人中心"
+      
+      checkin:
+        title: "每日签到"
+        button: "立即签到"
+        checked_in: "已签到"
+        consecutive_days: "连续签到 %{days} 天"
+        total_points: "累计积分：%{points}"
+        today_points: "今日获得：+%{points}"
+        lottery:
+          title: "幸运抽奖"
+          button: "立即抽奖"
+          description: "签到后可获得一次抽奖机会"
+          prizes: "奖品池"
+          history: "抽奖记录"
+          no_chance: "暂无抽奖机会"
+        calendar:
+          title: "签到日历"
+          this_month: "本月签到"
+      
+      todo:
+        title: "我的待办"
+        add_placeholder: "添加新的待办事项..."
+        empty: "暂无待办事项"
+        completed: "已完成"
+        pending: "待完成"
+        tabs:
+          todo: "待办清单"
+          wish: "愿望清单"
+        delete_confirm: "确定删除这个待办事项吗？"
+      
+      badge_wall:
+        title: "徽章墙"
+        my_badges: "我的徽章"
+        all_badges: "全部徽章"
+        collected: "已收藏"
+        not_collected: "未收藏"
+        earned: "已获得"
+        not_earned: "未获得"
+        collect: "收藏"
+        uncollect: "取消收藏"
+        progress: "收集进度"
+        empty: "暂无收藏的徽章"
+      
+      emoji:
+        title: "我的表情包"
+        upload: "上传表情"
+        empty: "暂无自定义表情"
+        delete_confirm: "确定删除这个表情吗？"
+        drag_hint: "拖拽图片到此处上传"
+        size_limit: "最大 %{size}KB"
