@@ -1,0 +1,15 @@
+# 忽略临时文件
+*.log
+*.tmp
+*.swp
+*~
+.DS_Store
+
+# 忽略IDE文件
+.vscode/
+.idea/
+*.sublime-*
+
+# 忽略编译产物（如果有）
+tmp/
+log/

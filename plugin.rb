@@ -83,29 +83,45 @@ after_initialize do
   # ==========================================
   
   add_to_class(:user, :checkins) do
+    return DiscourseCustomPlugin::UserCheckin.none unless ActiveRecord::Base.connection.table_exists?(:user_checkins)
     DiscourseCustomPlugin::UserCheckin.where(user_id: id)
+  rescue
+    DiscourseCustomPlugin::UserCheckin.none
   end
   
   add_to_class(:user, :todos) do
+    return DiscourseCustomPlugin::UserTodo.none unless ActiveRecord::Base.connection.table_exists?(:user_todos)
     DiscourseCustomPlugin::UserTodo.where(user_id: id)
+  rescue
+    DiscourseCustomPlugin::UserTodo.none
   end
   
   add_to_class(:user, :badge_collections) do
+    return DiscourseCustomPlugin::UserBadgeCollection.none unless ActiveRecord::Base.connection.table_exists?(:user_badge_collections)
     DiscourseCustomPlugin::UserBadgeCollection.where(user_id: id)
+  rescue
+    DiscourseCustomPlugin::UserBadgeCollection.none
   end
   
   add_to_class(:user, :custom_emojis) do
+    return DiscourseCustomPlugin::CustomEmoji.none unless ActiveRecord::Base.connection.table_exists?(:custom_emojis)
     DiscourseCustomPlugin::CustomEmoji.where(user_id: id)
+  rescue
+    DiscourseCustomPlugin::CustomEmoji.none
   end
   
   add_to_class(:user, :checked_in_today?) do
+    return false unless ActiveRecord::Base.connection.table_exists?(:user_checkins)
     DiscourseCustomPlugin::UserCheckin.exists?(
       user_id: id,
       checked_in_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day
     )
+  rescue
+    false
   end
   
   add_to_class(:user, :consecutive_checkin_days) do
+    return 0 unless ActiveRecord::Base.connection.table_exists?(:user_checkins)
     checkins = DiscourseCustomPlugin::UserCheckin
       .where(user_id: id)
       .order(checked_in_at: :desc)
@@ -122,6 +138,8 @@ after_initialize do
       end
     end
     days
+  rescue
+    0
   end
 
   # ==========================================
@@ -129,18 +147,34 @@ after_initialize do
   # ==========================================
   
   add_to_serializer(:current_user, :checked_in_today) do
+    return false unless object
+    return false unless ActiveRecord::Base.connection.table_exists?(:user_checkins)
     object.checked_in_today?
+  rescue
+    false
   end
   
   add_to_serializer(:current_user, :consecutive_checkin_days) do
+    return 0 unless object
+    return 0 unless ActiveRecord::Base.connection.table_exists?(:user_checkins)
     object.consecutive_checkin_days
+  rescue
+    0
   end
   
   add_to_serializer(:current_user, :todo_count) do
+    return 0 unless object
+    return 0 unless ActiveRecord::Base.connection.table_exists?(:user_todos)
     object.todos.where(completed: false).count
+  rescue
+    0
   end
   
   add_to_serializer(:current_user, :badge_collection_count) do
+    return 0 unless object
+    return 0 unless ActiveRecord::Base.connection.table_exists?(:user_badge_collections)
     object.badge_collections.count
+  rescue
+    0
   end
 end
