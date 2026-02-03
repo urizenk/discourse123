@@ -2,7 +2,7 @@
 
 module DiscourseCustomPlugin
   class CustomEmoji < ActiveRecord::Base
-    self.table_name = "custom_emojis"
+    self.table_name = "plugin_custom_emojis"
     
     belongs_to :user
     belongs_to :upload, optional: true

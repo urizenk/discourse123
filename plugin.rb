@@ -104,7 +104,7 @@ after_initialize do
   end
   
   add_to_class(:user, :custom_emojis) do
-    return DiscourseCustomPlugin::CustomEmoji.none unless ActiveRecord::Base.connection.table_exists?(:custom_emojis)
+    return DiscourseCustomPlugin::CustomEmoji.none unless ActiveRecord::Base.connection.table_exists?(:plugin_custom_emojis)
     DiscourseCustomPlugin::CustomEmoji.where(user_id: id)
   rescue
     DiscourseCustomPlugin::CustomEmoji.none
