@@ -3,7 +3,6 @@ import { action } from "@ember/object";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import I18n from "I18n";
 import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
 
@@ -96,7 +95,7 @@ export default class CustomEmojiPanel extends Component {
   
   @action
   async deleteEmoji(emoji) {
-    if (!confirm(I18n.t("custom_plugin.emoji.delete_confirm"))) return;
+    if (!confirm("确定删除这个表情吗？")) return;
     
     try {
       await ajax(`/custom-plugin/custom-emoji/${emoji.id}`, {
@@ -116,24 +115,24 @@ export default class CustomEmojiPanel extends Component {
   <template>
     <div class="custom-emoji-panel">
       <div class="emoji-header">
-        <h3>{{I18n.t "custom_plugin.emoji.title"}}</h3>
+        <h3>My Emoji</h3>
         <span class="emoji-count">{{this.stats.count}}/{{this.stats.max}}</span>
       </div>
       
       <div class="emoji-upload" role="button" {{on "click" this.triggerUpload}}>
         {{#if this.isUploading}}
-          <p>上传中...</p>
+          <p>Uploading...</p>
         {{else}}
           <svg viewBox="0 0 24 24">
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
           </svg>
-          <p>{{I18n.t "custom_plugin.emoji.drag_hint"}}</p>
-          <p class="size-hint">最大 256KB</p>
+          <p>Click to upload emoji</p>
+          <p class="size-hint">Max 256KB</p>
         {{/if}}
       </div>
       
       {{#if this.isLoading}}
-        <div class="loading-spinner">加载中...</div>
+        <div class="loading-spinner">Loading...</div>
       {{else if this.emojis.length}}
         <div class="emoji-grid">
           {{#each this.emojis as |emoji|}}
@@ -144,14 +143,14 @@ export default class CustomEmojiPanel extends Component {
                 class="emoji-delete"
                 {{on "click" (fn this.deleteEmoji emoji)}}
               >
-                ×
+                x
               </button>
             </div>
           {{/each}}
         </div>
       {{else}}
         <div class="todo-empty">
-          <p>{{I18n.t "custom_plugin.emoji.empty"}}</p>
+          <p>No custom emoji yet</p>
         </div>
       {{/if}}
     </div>

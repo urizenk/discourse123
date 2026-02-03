@@ -3,7 +3,6 @@ import { action } from "@ember/object";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import I18n from "I18n";
 import { eq, and, not } from "truth-helpers";
 import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
@@ -84,12 +83,12 @@ export default class BadgeWall extends Component {
   <template>
     <div class="badge-wall">
       {{#if this.isLoading}}
-        <div class="loading-spinner">加载中...</div>
+        <div class="loading-spinner">Loading...</div>
       {{else}}
         <div class="badge-wall-header">
-          <h2>{{I18n.t "custom_plugin.badge_wall.title"}}</h2>
+          <h2>Badge Wall</h2>
           <div class="progress-info">
-            <span>收集进度: {{this.stats.collected}}/{{this.stats.total}}</span>
+            <span>Progress: {{this.stats.collected}}/{{this.stats.total}}</span>
             <div class="progress-bar">
               <div class="progress" style="width: {{this.progressPercentage}}%"></div>
             </div>
@@ -101,13 +100,13 @@ export default class BadgeWall extends Component {
             class="tab {{if (eq this.activeTab 'collected') 'active'}}"
             {{on "click" (fn this.switchTab "collected")}}
           >
-            已收藏 ({{this.stats.collected}})
+            Collected ({{this.stats.collected}})
           </button>
           <button 
             class="tab {{if (eq this.activeTab 'earned') 'active'}}"
             {{on "click" (fn this.switchTab "earned")}}
           >
-            已获得 ({{this.stats.earned}})
+            Earned ({{this.stats.earned}})
           </button>
         </div>
         
@@ -119,17 +118,21 @@ export default class BadgeWall extends Component {
                   {{#if badge.image_url}}
                     <img src={{badge.image_url}} alt={{badge.name}} />
                   {{else}}
-                    <span class="badge-icon-placeholder">🏅</span>
+                    <span class="badge-icon-placeholder">
+                      <svg viewBox="0 0 24 24" width="32" height="32">
+                        <path fill="#ccc" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                    </span>
                   {{/if}}
                 </div>
                 <div class="badge-name">{{badge.name}}</div>
                 <div class="badge-status">
                   {{#if badge.collected}}
-                    ✓ 已收藏
+                    Collected
                   {{else if badge.earned}}
-                    已获得
+                    Earned
                   {{else}}
-                    未获得
+                    Not Earned
                   {{/if}}
                 </div>
                 {{#if (and badge.earned (not badge.collected))}}
@@ -137,7 +140,7 @@ export default class BadgeWall extends Component {
                     class="collect-button"
                     {{on "click" (fn this.collectBadge badge)}}
                   >
-                    收藏
+                    Collect
                   </button>
                 {{/if}}
               </div>
@@ -145,7 +148,7 @@ export default class BadgeWall extends Component {
           </div>
         {{else}}
           <div class="todo-empty">
-            <p>{{I18n.t "custom_plugin.badge_wall.empty"}}</p>
+            <p>No badges collected yet</p>
           </div>
         {{/if}}
       {{/if}}

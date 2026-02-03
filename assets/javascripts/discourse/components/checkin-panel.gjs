@@ -3,7 +3,6 @@ import { action } from "@ember/object";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import I18n from "I18n";
 import { or, not } from "truth-helpers";
 import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
@@ -111,13 +110,13 @@ export default class CheckinPanel extends Component {
   <template>
     <div class="checkin-panel">
       {{#if this.isLoading}}
-        <div class="loading-spinner">加载中...</div>
+        <div class="loading-spinner">Loading...</div>
       {{else}}
         <div class="checkin-header">
-          <h3>{{I18n.t "custom_plugin.checkin.title"}}</h3>
+          <h3>Daily Check-in</h3>
           {{#if this.consecutiveDays}}
             <span class="consecutive-badge">
-              🔥 连续 {{this.consecutiveDays}} 天
+              {{this.consecutiveDays}} days streak
             </span>
           {{/if}}
         </div>
@@ -128,34 +127,34 @@ export default class CheckinPanel extends Component {
           {{on "click" this.doCheckin}}
         >
           {{#if this.isCheckinLoading}}
-            签到中...
+            Checking in...
           {{else if this.checkedInToday}}
-            ✓ 今日已签到 (+{{this.todayCheckin.points_earned}}积分)
+            Checked in (+{{this.todayCheckin.points_earned}} points)
           {{else}}
-            立即签到
+            Check In Now
           {{/if}}
         </button>
         
         <div class="checkin-stats">
           <div class="stat-item">
             <div class="stat-value">{{this.stats.total_checkins}}</div>
-            <div class="stat-label">累计签到</div>
+            <div class="stat-label">Total Check-ins</div>
           </div>
           <div class="stat-item">
             <div class="stat-value">{{this.stats.total_points}}</div>
-            <div class="stat-label">累计积分</div>
+            <div class="stat-label">Total Points</div>
           </div>
           <div class="stat-item">
             <div class="stat-value">{{this.stats.this_month}}</div>
-            <div class="stat-label">本月签到</div>
+            <div class="stat-label">This Month</div>
           </div>
         </div>
         
         {{#if this.checkedInToday}}
           <div class="lottery-panel">
             <div class="lottery-header">
-              <h4>🎰 幸运抽奖</h4>
-              <p>签到成功，获得一次抽奖机会！</p>
+              <h4>Lucky Draw</h4>
+              <p>You got a chance to draw!</p>
             </div>
             
             <button 
@@ -164,13 +163,13 @@ export default class CheckinPanel extends Component {
               {{on "click" this.doLottery}}
             >
               {{#if this.isDrawing}}
-                抽奖中...
+                Drawing...
               {{else if this.todayPrize}}
-                已抽奖: {{this.todayPrize}}
+                Won: {{this.todayPrize}}
               {{else if this.canDraw}}
-                立即抽奖
+                Draw Now
               {{else}}
-                暂无抽奖机会
+                No chance available
               {{/if}}
             </button>
           </div>
@@ -180,9 +179,9 @@ export default class CheckinPanel extends Component {
       {{#if this.showPrizeModal}}
         <div class="prize-modal-overlay" {{on "click" this.closePrizeModal}}>
           <div class="prize-modal" {{on "click" this.stopPropagation}}>
-            <h3>🎉 恭喜中奖！</h3>
+            <h3>Congratulations!</h3>
             <div class="prize-display">{{this.wonPrize}}</div>
-            <button {{on "click" this.closePrizeModal}}>确定</button>
+            <button {{on "click" this.closePrizeModal}}>OK</button>
           </div>
         </div>
       {{/if}}
