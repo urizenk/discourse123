@@ -4,6 +4,9 @@ import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import I18n from "I18n";
+import { or, not } from "truth-helpers";
+import { fn } from "@ember/helper";
+import { on } from "@ember/modifier";
 
 export default class CheckinPanel extends Component {
   @tracked isLoading = true;
@@ -100,6 +103,11 @@ export default class CheckinPanel extends Component {
     this.showPrizeModal = false;
   }
   
+  @action
+  stopPropagation(event) {
+    event.stopPropagation();
+  }
+  
   <template>
     <div class="checkin-panel">
       {{#if this.isLoading}}
@@ -171,7 +179,7 @@ export default class CheckinPanel extends Component {
       
       {{#if this.showPrizeModal}}
         <div class="prize-modal-overlay" {{on "click" this.closePrizeModal}}>
-          <div class="prize-modal" {{on "click" (fn (mut this) "stopPropagation")}}>
+          <div class="prize-modal" {{on "click" this.stopPropagation}}>
             <h3>🎉 恭喜中奖！</h3>
             <div class="prize-display">{{this.wonPrize}}</div>
             <button {{on "click" this.closePrizeModal}}>确定</button>

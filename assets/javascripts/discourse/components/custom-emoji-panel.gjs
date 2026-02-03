@@ -4,6 +4,8 @@ import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import I18n from "I18n";
+import { fn } from "@ember/helper";
+import { on } from "@ember/modifier";
 
 export default class CustomEmojiPanel extends Component {
   @tracked isLoading = true;

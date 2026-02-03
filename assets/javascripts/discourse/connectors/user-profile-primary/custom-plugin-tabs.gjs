@@ -2,6 +2,13 @@ import Component from "@glimmer/component";
 import { action } from "@ember/object";
 import { inject as service } from "@ember/service";
 import { tracked } from "@glimmer/tracking";
+import { eq } from "truth-helpers";
+import { fn } from "@ember/helper";
+import { on } from "@ember/modifier";
+import CheckinPanel from "../../components/checkin-panel";
+import TodoPanel from "../../components/todo-panel";
+import BadgeWall from "../../components/badge-wall";
+import CustomEmojiPanel from "../../components/custom-emoji-panel";
 
 export default class CustomPluginTabs extends Component {
   @service router;
