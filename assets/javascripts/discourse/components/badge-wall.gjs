@@ -15,6 +15,10 @@ export default class BadgeWall extends Component {
   @tracked stats = {};
   @tracked activeTab = "collected"; // collected 或 all
   
+  get userId() {
+    return this.args.userId;
+  }
+  
   constructor() {
     super(...arguments);
     this.loadBadges();
@@ -22,7 +26,11 @@ export default class BadgeWall extends Component {
   
   async loadBadges() {
     try {
-      const result = await ajax("/custom-plugin/badge-wall");
+      let url = "/custom-plugin/badge-wall";
+      if (this.userId) {
+        url += `?user_id=${this.userId}`;
+      }
+      const result = await ajax(url);
       this.collections = result.collections;
       this.earnedBadges = result.earned_badges;
       this.allBadges = result.all_badges;

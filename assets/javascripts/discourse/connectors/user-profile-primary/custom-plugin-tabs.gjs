@@ -14,10 +14,14 @@ export default class CustomPluginTabs extends Component {
   @service router;
   @service currentUser;
   
-  @tracked activeTab = "checkin";
+  @tracked activeTab = "badges";
   
   get isOwnProfile() {
     return this.currentUser?.id === this.args.outletArgs?.model?.id;
+  }
+  
+  get profileUserId() {
+    return this.args.outletArgs?.model?.id;
   }
   
   @action
@@ -26,10 +30,10 @@ export default class CustomPluginTabs extends Component {
   }
   
   <template>
-    {{#if this.isOwnProfile}}
-      <div class="custom-plugin-container">
-        <div class="custom-plugin-tabs">
-          <div class="tabs-nav">
+    <div class="custom-plugin-container">
+      <div class="custom-plugin-tabs">
+        <div class="tabs-nav">
+          {{#if this.isOwnProfile}}
             <button 
               type="button"
               class="tab {{if (eq this.activeTab 'checkin') 'active'}}"
@@ -37,20 +41,22 @@ export default class CustomPluginTabs extends Component {
             >
               Daily Check-in
             </button>
-            <button 
-              type="button"
-              class="tab {{if (eq this.activeTab 'todo') 'active'}}"
-              {{on "click" (fn this.setTab "todo")}}
-            >
-              To Do List
-            </button>
-            <button 
-              type="button"
-              class="tab {{if (eq this.activeTab 'badges') 'active'}}"
-              {{on "click" (fn this.setTab "badges")}}
-            >
-              Badge Wall
-            </button>
+          {{/if}}
+          <button 
+            type="button"
+            class="tab {{if (eq this.activeTab 'todo') 'active'}}"
+            {{on "click" (fn this.setTab "todo")}}
+          >
+            To Do List
+          </button>
+          <button 
+            type="button"
+            class="tab {{if (eq this.activeTab 'badges') 'active'}}"
+            {{on "click" (fn this.setTab "badges")}}
+          >
+            Badge Wall
+          </button>
+          {{#if this.isOwnProfile}}
             <button 
               type="button"
               class="tab {{if (eq this.activeTab 'emoji') 'active'}}"
@@ -58,21 +64,21 @@ export default class CustomPluginTabs extends Component {
             >
               My Emoji
             </button>
-          </div>
-          
-          <div class="tab-content">
-            {{#if (eq this.activeTab "checkin")}}
-              <CheckinPanel />
-            {{else if (eq this.activeTab "todo")}}
-              <TodoPanel />
-            {{else if (eq this.activeTab "badges")}}
-              <BadgeWall @userId={{this.currentUser.id}} />
-            {{else if (eq this.activeTab "emoji")}}
-              <CustomEmojiPanel />
-            {{/if}}
-          </div>
+          {{/if}}
+        </div>
+        
+        <div class="tab-content">
+          {{#if (eq this.activeTab "checkin")}}
+            <CheckinPanel />
+          {{else if (eq this.activeTab "todo")}}
+            <TodoPanel @userId={{this.profileUserId}} @isOwner={{this.isOwnProfile}} />
+          {{else if (eq this.activeTab "badges")}}
+            <BadgeWall @userId={{this.profileUserId}} />
+          {{else if (eq this.activeTab "emoji")}}
+            <CustomEmojiPanel />
+          {{/if}}
         </div>
       </div>
-    {{/if}}
+    </div>
   </template>
 }
