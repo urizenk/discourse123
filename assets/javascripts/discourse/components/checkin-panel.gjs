@@ -22,6 +22,25 @@ export default class CheckinPanel extends Component {
   @tracked showPrizeModal = false;
   @tracked wonPrize = null;
   
+  // 老虎机动画状态
+  @tracked showSlotMachine = false;
+  @tracked slot1 = "?";
+  @tracked slot2 = "?";
+  @tracked slot3 = "?";
+  @tracked slotAnimating = false;
+  
+  // 奖品配置
+  prizes = [
+    { symbol: "7", name: "7", weight: 5 },
+    { symbol: "★", name: "Star", weight: 10 },
+    { symbol: "♦", name: "Diamond", weight: 15 },
+    { symbol: "♣", name: "Club", weight: 20 },
+    { symbol: "♥", name: "Heart", weight: 25 },
+    { symbol: "♠", name: "Spade", weight: 25 }
+  ];
+  
+  slotSymbols = ["7", "★", "♦", "♣", "♥", "♠"];
+  
   constructor() {
     super(...arguments);
     this.loadCheckinData();
@@ -78,23 +97,66 @@ export default class CheckinPanel extends Component {
     if (this.isDrawing || !this.canDraw) return;
     
     this.isDrawing = true;
+    this.showSlotMachine = true;
+    this.slotAnimating = true;
     
+    // 开始老虎机动画
+    let animationCount = 0;
+    const maxAnimations = 20;
+    
+    const animateSlots = () => {
+      this.slot1 = this.slotSymbols[Math.floor(Math.random() * this.slotSymbols.length)];
+      this.slot2 = this.slotSymbols[Math.floor(Math.random() * this.slotSymbols.length)];
+      this.slot3 = this.slotSymbols[Math.floor(Math.random() * this.slotSymbols.length)];
+      
+      animationCount++;
+      
+      if (animationCount < maxAnimations) {
+        setTimeout(animateSlots, 100 + animationCount * 10);
+      } else {
+        this.finishLottery();
+      }
+    };
+    
+    animateSlots();
+  }
+  
+  async finishLottery() {
     try {
       const result = await ajax("/custom-plugin/checkin/draw", {
         type: "POST"
       });
       
       if (result.success) {
+        // 显示最终结果
+        const prizeSymbol = this.getPrizeSymbol(result.prize);
+        this.slot1 = prizeSymbol;
+        this.slot2 = prizeSymbol;
+        this.slot3 = prizeSymbol;
+        
         this.wonPrize = result.prize;
         this.todayPrize = result.prize;
         this.canDraw = false;
-        this.showPrizeModal = true;
+        
+        // 延迟显示结果弹窗
+        setTimeout(() => {
+          this.slotAnimating = false;
+          this.showPrizeModal = true;
+        }, 500);
       }
     } catch (error) {
       popupAjaxError(error);
+      this.slotAnimating = false;
     } finally {
       this.isDrawing = false;
     }
+  }
+  
+  getPrizeSymbol(prizeName) {
+    // 根据奖品返回对应符号
+    if (prizeName && prizeName.includes("积分")) return "★";
+    if (prizeName && prizeName.includes("大奖")) return "7";
+    return this.slotSymbols[Math.floor(Math.random() * this.slotSymbols.length)];
   }
   
   @action
@@ -156,6 +218,22 @@ export default class CheckinPanel extends Component {
               <h4>Lucky Draw</h4>
               <p>You got a chance to draw!</p>
             </div>
+            
+            {{#if this.showSlotMachine}}
+              <div class="slot-machine {{if this.slotAnimating 'animating'}}">
+                <div class="slot-container">
+                  <div class="slot-reel">
+                    <span class="slot-symbol">{{this.slot1}}</span>
+                  </div>
+                  <div class="slot-reel">
+                    <span class="slot-symbol">{{this.slot2}}</span>
+                  </div>
+                  <div class="slot-reel">
+                    <span class="slot-symbol">{{this.slot3}}</span>
+                  </div>
+                </div>
+              </div>
+            {{/if}}
             
             <button 
               class="lottery-button"
