@@ -1,0 +1,37 @@
+en:
+  site_settings:
+    custom_plugin_enabled: "Enable custom plugin"
+    checkin_enabled: "Enable daily check-in"
+    checkin_base_points: "Base points for daily check-in"
+    checkin_consecutive_bonus: "Bonus points per consecutive day"
+    checkin_lottery_enabled: "Enable lottery after check-in"
+    checkin_lottery_prizes: "Lottery prizes (separated by |)"
+    checkin_lottery_probabilities: "Prize probabilities (separated by |)"
+    checkin_extra_lottery_cost: "Points cost for extra lottery draw"
+    checkin_max_extra_lottery_per_day: "Maximum extra lottery draws per day"
+    todo_enabled: "Enable todo list"
+    todo_max_items: "Maximum todo items per user"
+    badge_wall_enabled: "Enable badge wall"
+    badge_wall_public: "Badge wall visible to all users"
+    custom_emoji_enabled: "Enable custom emoji"
+    custom_emoji_max_per_user: "Maximum custom emoji per user"
+    custom_emoji_max_size_kb: "Maximum emoji file size (KB)"
+  
+  discourse_custom_plugin:
+    checkin:
+      success: "Check-in successful! You earned %{points} points."
+      already_checked_in: "You have already checked in today."
+      lottery_win: "Congratulations! You won: %{prize}"
+      lottery_no_chance: "No lottery chance available"
+    todo:
+      created: "Todo created"
+      updated: "Todo updated"
+      deleted: "Todo deleted"
+      max_reached: "Maximum todo items reached"
+    badge_wall:
+      collected: "Badge collected"
+      not_earned: "You haven't earned this badge yet"
+      already_collected: "Badge already collected"
+    emoji:
+      uploaded: "Emoji uploaded"
+      deleted: "Emoji deleted"

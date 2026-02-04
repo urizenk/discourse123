@@ -12,6 +12,9 @@ export default class TodoPanel extends Component {
   @tracked todos = [];
   @tracked activeTab = "todo"; // todo 或 wish
   @tracked newTodoTitle = "";
+  @tracked newTodoImage = null;
+  @tracked newTodoImageUrl = "";
+  @tracked isUploading = false;
   @tracked stats = {};
   
   get isOwner() {
@@ -51,23 +54,69 @@ export default class TodoPanel extends Component {
   }
   
   @action
+  triggerImageUpload() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = (e) => this.handleImageSelect(e);
+    input.click();
+  }
+  
+  @action
+  async handleImageSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    this.isUploading = true;
+    
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "composer");
+      
+      const uploadResult = await ajax("/uploads.json", {
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false
+      });
+      
+      this.newTodoImageUrl = uploadResult.url;
+    } catch (error) {
+      popupAjaxError(error);
+    } finally {
+      this.isUploading = false;
+    }
+  }
+  
+  @action
+  removeImage() {
+    this.newTodoImageUrl = "";
+  }
+  
+  @action
   async addTodo() {
     if (!this.newTodoTitle.trim()) return;
     
     try {
+      const todoData = {
+        title: this.newTodoTitle,
+        list_type: this.activeTab
+      };
+      
+      if (this.newTodoImageUrl) {
+        todoData.image_url = this.newTodoImageUrl;
+      }
+      
       const result = await ajax("/custom-plugin/todos", {
         type: "POST",
-        data: {
-          todo: {
-            title: this.newTodoTitle,
-            list_type: this.activeTab
-          }
-        }
+        data: { todo: todoData }
       });
       
       if (result.success) {
         this.todos = [result.todo, ...this.todos];
         this.newTodoTitle = "";
+        this.newTodoImageUrl = "";
       }
     } catch (error) {
       popupAjaxError(error);
@@ -98,7 +147,7 @@ export default class TodoPanel extends Component {
   
   @action
   async deleteTodo(todo) {
-    if (!confirm("确定删除这个待办事项吗？")) return;
+    if (!confirm("Are you sure you want to delete this item?")) return;
     
     try {
       await ajax(`/custom-plugin/todos/${todo.id}`, {
@@ -141,15 +190,36 @@ export default class TodoPanel extends Component {
       </div>
       
       {{#if this.isOwner}}
-        <div class="todo-input">
-          <input 
-            type="text"
-            placeholder="Add new item..."
-            value={{this.newTodoTitle}}
-            {{on "input" this.updateNewTodoTitle}}
-            {{on "keydown" this.handleKeydown}}
-          />
-          <button {{on "click" this.addTodo}}>Add</button>
+        <div class="todo-input-wrapper">
+          <div class="todo-input">
+            <input 
+              type="text"
+              placeholder="Add new item..."
+              value={{this.newTodoTitle}}
+              {{on "input" this.updateNewTodoTitle}}
+              {{on "keydown" this.handleKeydown}}
+            />
+            <button 
+              class="upload-btn" 
+              title="Add image"
+              {{on "click" this.triggerImageUpload}}
+            >
+              {{#if this.isUploading}}
+                ...
+              {{else}}
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                  <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                </svg>
+              {{/if}}
+            </button>
+            <button {{on "click" this.addTodo}}>Add</button>
+          </div>
+          {{#if this.newTodoImageUrl}}
+            <div class="todo-image-preview">
+              <img src={{this.newTodoImageUrl}} alt="Preview" />
+              <button class="remove-image" {{on "click" this.removeImage}}>x</button>
+            </div>
+          {{/if}}
         </div>
       {{/if}}
       
@@ -158,44 +228,51 @@ export default class TodoPanel extends Component {
       {{else if this.todos.length}}
         <div class="todo-list">
           {{#each this.todos as |todo|}}
-            <div class="todo-item {{if todo.completed 'completed'}}">
-              {{#if this.isOwner}}
-                <div 
-                  class="todo-checkbox {{if todo.completed 'checked'}}"
-                  {{on "click" (fn this.toggleTodo todo)}}
-                >
-                  {{#if todo.completed}}
-                    <svg viewBox="0 0 24 24" width="14" height="14">
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                    </svg>
-                  {{/if}}
-                </div>
-              {{else}}
-                <div class="todo-checkbox readonly {{if todo.completed 'checked'}}">
-                  {{#if todo.completed}}
-                    <svg viewBox="0 0 24 24" width="14" height="14">
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                    </svg>
-                  {{/if}}
-                </div>
-              {{/if}}
-              
-              <span class="todo-title">{{todo.title}}</span>
-              
-              {{#if todo.priority}}
-                <span class="priority-badge priority-{{todo.priority}}">
-                  {{#if (eq todo.priority 1)}}Important{{/if}}
-                  {{#if (eq todo.priority 2)}}Urgent{{/if}}
-                </span>
-              {{/if}}
-              
-              {{#if this.isOwner}}
-                <div class="todo-actions">
-                  <button {{on "click" (fn this.deleteTodo todo)}} class="delete-btn">
-                    <svg viewBox="0 0 24 24" width="16" height="16">
-                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                    </svg>
-                  </button>
+            <div class="todo-item {{if todo.completed 'completed'}} {{if todo.image_url 'has-image'}}">
+              <div class="todo-main">
+                {{#if this.isOwner}}
+                  <div 
+                    class="todo-checkbox {{if todo.completed 'checked'}}"
+                    {{on "click" (fn this.toggleTodo todo)}}
+                  >
+                    {{#if todo.completed}}
+                      <svg viewBox="0 0 24 24" width="14" height="14">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                      </svg>
+                    {{/if}}
+                  </div>
+                {{else}}
+                  <div class="todo-checkbox readonly {{if todo.completed 'checked'}}">
+                    {{#if todo.completed}}
+                      <svg viewBox="0 0 24 24" width="14" height="14">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                      </svg>
+                    {{/if}}
+                  </div>
+                {{/if}}
+                
+                <span class="todo-title">{{todo.title}}</span>
+                
+                {{#if todo.priority}}
+                  <span class="priority-badge priority-{{todo.priority}}">
+                    {{#if (eq todo.priority 1)}}Important{{/if}}
+                    {{#if (eq todo.priority 2)}}Urgent{{/if}}
+                  </span>
+                {{/if}}
+                
+                {{#if this.isOwner}}
+                  <div class="todo-actions">
+                    <button {{on "click" (fn this.deleteTodo todo)}} class="delete-btn">
+                      <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                      </svg>
+                    </button>
+                  </div>
+                {{/if}}
+              </div>
+              {{#if todo.image_url}}
+                <div class="todo-image">
+                  <img src={{todo.image_url}} alt={{todo.title}} />
                 </div>
               {{/if}}
             </div>

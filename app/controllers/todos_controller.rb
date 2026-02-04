@@ -3,15 +3,27 @@
 module DiscourseCustomPlugin
   class TodosController < ::ApplicationController
     requires_plugin PLUGIN_NAME
-    before_action :ensure_logged_in
+    before_action :ensure_logged_in, except: [:index]
     before_action :ensure_todo_enabled
     before_action :find_todo, only: [:update, :destroy, :toggle, :reorder]
     
     def index
       list_type = params[:type] || "todo"
       
+      # 支持查看其他用户的待办清单
+      target_user = if params[:user_id].present?
+        User.find_by(id: params[:user_id])
+      else
+        current_user
+      end
+      
+      # 如果没有找到用户，返回空数据
+      unless target_user
+        return render json: { todos: [], stats: { total: 0, completed: 0, pending: 0 } }
+      end
+      
       todos = UserTodo
-        .where(user_id: current_user.id, list_type: list_type)
+        .where(user_id: target_user.id, list_type: list_type)
         .ordered
       
       render json: {
@@ -104,7 +116,7 @@ module DiscourseCustomPlugin
     end
     
     def todo_params
-      params.require(:todo).permit(:title, :description, :list_type, :due_date, :priority)
+      params.require(:todo).permit(:title, :description, :list_type, :due_date, :priority, :image_url)
     end
     
     def serialize_todo(todo)
@@ -112,6 +124,7 @@ module DiscourseCustomPlugin
         id: todo.id,
         title: todo.title,
         description: todo.description,
+        image_url: todo.image_url,
         completed: todo.completed,
         position: todo.position,
         list_type: todo.list_type,

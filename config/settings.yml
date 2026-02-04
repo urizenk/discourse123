@@ -19,13 +19,23 @@ plugins:
     default: true
     client: true
   checkin_lottery_prizes:
-    default: "10积分|50积分|100积分|神秘大奖"
+    default: "10 Points|50 Points|100 Points|Mystery Prize"
     type: list
     list_type: simple
   checkin_lottery_probabilities:
     default: "50|30|15|5"
     type: list
     list_type: simple
+  checkin_extra_lottery_cost:
+    default: 50
+    min: 0
+    max: 1000
+    client: true
+  checkin_max_extra_lottery_per_day:
+    default: 3
+    min: 0
+    max: 10
+    client: true
   
   # To Do List 设置
   todo_enabled:

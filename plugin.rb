@@ -33,6 +33,7 @@ after_initialize do
   require_relative "app/models/user_todo"
   require_relative "app/models/user_badge_collection"
   require_relative "app/models/custom_emoji"
+  require_relative "app/models/extra_lottery_record"
   
   # ==========================================
   # 加载控制器
@@ -54,6 +55,7 @@ after_initialize do
     get "/checkin/history" => "checkin#history"
     get "/checkin/lottery" => "checkin#lottery"
     post "/checkin/draw" => "checkin#draw"
+    post "/checkin/extra-draw" => "checkin#extra_draw"
     
     # To Do List
     resources :todos, only: [:index, :create, :update, :destroy] do

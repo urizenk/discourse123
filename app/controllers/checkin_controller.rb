@@ -53,6 +53,10 @@ module DiscourseCustomPlugin
       render json: {
         enabled: SiteSetting.checkin_lottery_enabled,
         can_draw: can_draw_lottery?,
+        can_buy_draw: can_buy_extra_lottery?,
+        extra_draw_cost: SiteSetting.checkin_extra_lottery_cost,
+        extra_draws_remaining: extra_draws_remaining,
+        user_points: user_total_points,
         prizes: SiteSetting.checkin_lottery_prizes.split("|"),
         today_prize: today_checkin_data&.dig(:lottery_prize)
       }
@@ -62,7 +66,7 @@ module DiscourseCustomPlugin
       unless can_draw_lottery?
         return render json: {
           success: false,
-          message: I18n.t("discourse_custom_plugin.checkin.lottery_no_chance")
+          message: "No lottery chance available"
         }, status: 422
       end
       
@@ -72,14 +76,48 @@ module DiscourseCustomPlugin
         render json: {
           success: true,
           prize: prize,
-          message: I18n.t("discourse_custom_plugin.checkin.lottery_win", prize: prize)
+          message: "You won: #{prize}"
         }
       else
         render json: {
           success: false,
-          message: I18n.t("discourse_custom_plugin.checkin.lottery_no_chance")
+          message: "No lottery chance available"
         }, status: 422
       end
+    end
+    
+    # 额外抽奖（消耗积分）
+    def extra_draw
+      unless can_buy_extra_lottery?
+        return render json: {
+          success: false,
+          message: "Cannot purchase extra lottery"
+        }, status: 422
+      end
+      
+      cost = SiteSetting.checkin_extra_lottery_cost
+      
+      # 扣除积分
+      unless deduct_user_points(cost)
+        return render json: {
+          success: false,
+          message: "Insufficient points"
+        }, status: 422
+      end
+      
+      # 执行抽奖
+      prize = perform_lottery
+      
+      # 记录额外抽奖
+      record_extra_lottery(prize)
+      
+      render json: {
+        success: true,
+        prize: prize,
+        points_spent: cost,
+        remaining_points: user_total_points,
+        extra_draws_remaining: extra_draws_remaining
+      }
     end
     
     private
@@ -114,6 +152,64 @@ module DiscourseCustomPlugin
       
       today_checkin = UserCheckin.today.find_by(user_id: current_user.id)
       today_checkin&.lottery_prize.blank?
+    end
+    
+    def can_buy_extra_lottery?
+      return false unless SiteSetting.checkin_lottery_enabled
+      return false unless current_user.checked_in_today?
+      return false if extra_draws_remaining <= 0
+      return false if user_total_points < SiteSetting.checkin_extra_lottery_cost
+      true
+    end
+    
+    def extra_draws_remaining
+      max_draws = SiteSetting.checkin_max_extra_lottery_per_day
+      today_draws = ExtraLotteryRecord.where(user_id: current_user.id)
+        .where("created_at >= ?", Date.current.beginning_of_day)
+        .count
+      [max_draws - today_draws, 0].max
+    end
+    
+    def user_total_points
+      UserCheckin.where(user_id: current_user.id).sum(:points_earned)
+    end
+    
+    def deduct_user_points(amount)
+      return false if user_total_points < amount
+      
+      # 创建负积分记录
+      UserCheckin.create!(
+        user_id: current_user.id,
+        checked_in_at: Time.current,
+        points_earned: -amount,
+        consecutive_days: 0,
+        lottery_prize: "Points spent on lottery"
+      )
+      true
+    end
+    
+    def perform_lottery
+      prizes = SiteSetting.checkin_lottery_prizes.split("|")
+      probabilities = SiteSetting.checkin_lottery_probabilities.split("|").map(&:to_i)
+      
+      total = probabilities.sum
+      random = rand(total)
+      cumulative = 0
+      
+      prizes.each_with_index do |prize, index|
+        cumulative += probabilities[index] || 10
+        return prize if random < cumulative
+      end
+      
+      prizes.last
+    end
+    
+    def record_extra_lottery(prize)
+      ExtraLotteryRecord.create!(
+        user_id: current_user.id,
+        prize: prize,
+        points_spent: SiteSetting.checkin_extra_lottery_cost
+      )
     end
     
     def serialize_checkin(checkin)

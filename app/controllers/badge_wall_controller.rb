@@ -3,19 +3,31 @@
 module DiscourseCustomPlugin
   class BadgeWallController < ::ApplicationController
     requires_plugin PLUGIN_NAME
-    before_action :ensure_logged_in, except: [:show]
+    before_action :ensure_logged_in, except: [:show, :index]
     before_action :ensure_badge_wall_enabled
     
     def index
-      # 获取当前用户已收藏的徽章
+      # 支持查看其他用户的徽章墙
+      target_user = if params[:user_id].present?
+        User.find_by(id: params[:user_id])
+      else
+        current_user
+      end
+      
+      # 如果没有找到用户，返回空数据
+      unless target_user
+        return render json: { collections: [], earned_badges: [], all_badges: [], stats: { collected: 0, earned: 0, total: 0 } }
+      end
+      
+      # 获取目标用户已收藏的徽章
       collections = UserBadgeCollection
-        .where(user_id: current_user.id)
+        .where(user_id: target_user.id)
         .includes(:badge)
         .ordered
       
       # 获取用户已获得的所有徽章
       earned_badges = UserBadge
-        .where(user_id: current_user.id)
+        .where(user_id: target_user.id)
         .includes(:badge)
         .map(&:badge)
         .uniq
@@ -25,8 +37,8 @@ module DiscourseCustomPlugin
       
       render json: {
         collections: collections.map { |c| serialize_collection(c) },
-        earned_badges: earned_badges.map { |b| serialize_badge(b, current_user) },
-        all_badges: all_badges.map { |b| serialize_badge(b, current_user) },
+        earned_badges: earned_badges.map { |b| serialize_badge(b, target_user) },
+        all_badges: all_badges.map { |b| serialize_badge(b, target_user) },
         stats: {
           collected: collections.count,
           earned: earned_badges.count,
