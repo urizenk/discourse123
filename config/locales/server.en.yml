@@ -16,7 +16,7 @@ en:
     custom_emoji_enabled: "Enable custom emoji"
     custom_emoji_max_per_user: "Maximum custom emoji per user"
     custom_emoji_max_size_kb: "Maximum emoji file size (KB)"
-  
+
   discourse_custom_plugin:
     checkin:
       success: "Check-in successful! You earned %{points} points."
