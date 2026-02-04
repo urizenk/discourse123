@@ -164,7 +164,7 @@ module DiscourseCustomPlugin
     
     def extra_draws_remaining
       max_draws = SiteSetting.checkin_max_extra_lottery_per_day
-      today_draws = ExtraLotteryRecord.where(user_id: current_user.id)
+      today_draws = DiscourseCustomPlugin::ExtraLotteryRecord.where(user_id: current_user.id)
         .where("created_at >= ?", Date.current.beginning_of_day)
         .count
       [max_draws - today_draws, 0].max
@@ -205,7 +205,7 @@ module DiscourseCustomPlugin
     end
     
     def record_extra_lottery(prize)
-      ExtraLotteryRecord.create!(
+      DiscourseCustomPlugin::ExtraLotteryRecord.create!(
         user_id: current_user.id,
         prize: prize,
         points_spent: SiteSetting.checkin_extra_lottery_cost

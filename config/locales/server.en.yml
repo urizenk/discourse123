@@ -21,6 +21,7 @@ en:
     checkin:
       success: "Check-in successful! You earned %{points} points."
       already_checked_in: "You have already checked in today."
+      consecutive_bonus: "Consecutive check-in for %{days} days, bonus %{bonus} points"
       lottery_win: "Congratulations! You won: %{prize}"
       lottery_no_chance: "No lottery chance available"
     todo:
@@ -35,3 +36,5 @@ en:
     emoji:
       uploaded: "Emoji uploaded"
       deleted: "Emoji deleted"
+      max_reached: "Maximum custom emoji reached"
+      file_too_large: "File size exceeds limit"

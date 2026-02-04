@@ -7,6 +7,8 @@ zh_CN:
     checkin_lottery_enabled: "启用签到抽奖功能"
     checkin_lottery_prizes: "抽奖奖品列表（用|分隔）"
     checkin_lottery_probabilities: "抽奖概率列表（用|分隔，总和应为100）"
+    checkin_extra_lottery_cost: "额外抽奖所需积分"
+    checkin_max_extra_lottery_per_day: "每日最大额外抽奖次数"
     todo_enabled: "启用待办清单功能"
     todo_max_items: "每用户最大待办数量"
     badge_wall_enabled: "启用徽章墙功能"
