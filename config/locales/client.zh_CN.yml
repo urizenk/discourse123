@@ -2,53 +2,78 @@ zh_CN:
   js:
     custom_plugin:
       title: "个人中心"
-      
+      loading: "加载中..."
+      collapse: "收起"
+      expand: "展开"
+      add: "添加"
+
+      tabs:
+        checkin: "每日签到"
+        todo: "待办清单"
+        badges: "徽章墙"
+        emoji: "我的表情包"
+
       checkin:
         title: "每日签到"
         button: "立即签到"
+        checking_in: "签到中..."
         checked_in: "已签到"
-        consecutive_days: "连续签到 %{days} 天"
-        total_points: "累计积分：%{points}"
-        today_points: "今日获得：+%{points}"
+        points_earned: "+%{points} 积分"
+        streak: "连续 %{days} 天"
+        stat_total: "总签到"
+        stat_points: "总积分"
+        stat_month: "本月"
         lottery:
           title: "幸运抽奖"
           button: "立即抽奖"
-          description: "签到后可获得一次抽奖机会"
-          prizes: "奖品池"
-          history: "抽奖记录"
+          drawing: "抽奖中..."
+          description: "签到后获得一次抽奖机会"
           no_chance: "暂无抽奖机会"
+          won: "恭喜获得：%{prize}"
+          congratulations: "恭喜中奖！"
+          ok: "确定"
+          extra_draw: "额外抽奖 (-%{cost} 积分)"
+          extra_info: "消耗 %{cost} 积分进行额外抽奖（剩余 %{remaining} 次）"
         calendar:
           title: "签到日历"
-          this_month: "本月签到"
-      
+          hide: "收起"
+          show: "日历"
+
       todo:
         title: "我的待办"
-        add_placeholder: "添加新的待办事项..."
-        empty: "暂无待办事项"
+        add_placeholder: "添加新的事项..."
+        add_image: "添加图片"
+        empty: "暂无事项"
         completed: "已完成"
         pending: "待完成"
         tabs:
           todo: "待办清单"
           wish: "愿望清单"
-        delete_confirm: "确定删除这个待办事项吗？"
-      
+        priority:
+          important: "重要"
+          urgent: "紧急"
+        delete_confirm: "确定删除这个事项吗？"
+
       badge_wall:
         title: "徽章墙"
-        my_badges: "我的徽章"
-        all_badges: "全部徽章"
         collected: "已收藏"
-        not_collected: "未收藏"
         earned: "已获得"
         not_earned: "未获得"
         collect: "收藏"
         uncollect: "取消收藏"
         progress: "收集进度"
         empty: "暂无收藏的徽章"
-      
+
       emoji:
         title: "我的表情包"
-        upload: "上传表情"
+        upload: "点击上传表情"
+        uploading: "上传中..."
         empty: "暂无自定义表情"
         delete_confirm: "确定删除这个表情吗？"
-        drag_hint: "拖拽图片到此处上传"
-        size_limit: "最大 %{size}KB"
+        size_limit: "最大 256KB"
+        name_prompt: "请输入表情名称（只能包含字母、数字和下划线）："
+        file_too_large: "文件大小超过限制"
+
+      user_card:
+        badge_wall: "徽章墙"
+        todo_list: "待办清单"

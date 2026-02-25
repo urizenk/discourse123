@@ -1,48 +1,43 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
+import i18n from "discourse-common/helpers/i18n";
 
 export default class UserCardBadges extends Component {
   @tracked isLoading = true;
   @tracked badges = [];
   @tracked todos = [];
-  
-  get userId() {
-    return this.args.outletArgs?.user?.id;
-  }
-  
+
+  get userId() { return this.args.outletArgs?.user?.id; }
+
   constructor() {
     super(...arguments);
-    if (this.userId) {
-      this.loadData();
-    }
+    if (this.userId) this.loadData();
   }
-  
+
   async loadData() {
     try {
-      // 加载徽章
       const badgeResult = await ajax(`/custom-plugin/badge-wall?user_id=${this.userId}`);
       this.badges = (badgeResult.collections || []).slice(0, 6).map(c => c.badge);
-      
-      // 加载待办
+
       const todoResult = await ajax(`/custom-plugin/todos?user_id=${this.userId}&type=todo`);
       this.todos = (todoResult.todos || []).slice(0, 3);
-    } catch (error) {
-      console.error("Failed to load user card data:", error);
+    } catch {
+      // silently fail for user card popup
     } finally {
       this.isLoading = false;
     }
   }
-  
+
   <template>
     {{#if this.userId}}
       <div class="user-card-custom-section">
         {{#if this.isLoading}}
-          <div class="loading-text">Loading...</div>
+          <div class="loading-text">{{i18n "custom_plugin.loading"}}</div>
         {{else}}
           {{#if this.badges.length}}
             <div class="user-card-badges">
-              <h4>Badge Wall</h4>
+              <h4>{{i18n "custom_plugin.user_card.badge_wall"}}</h4>
               <div class="badge-mini-grid">
                 {{#each this.badges as |badge|}}
                   <div class="badge-mini" title={{badge.name}}>
@@ -58,10 +53,10 @@ export default class UserCardBadges extends Component {
               </div>
             </div>
           {{/if}}
-          
+
           {{#if this.todos.length}}
             <div class="user-card-todos">
-              <h4>To Do List</h4>
+              <h4>{{i18n "custom_plugin.user_card.todo_list"}}</h4>
               <ul class="todo-mini-list">
                 {{#each this.todos as |todo|}}
                   <li class="{{if todo.completed 'completed'}}">

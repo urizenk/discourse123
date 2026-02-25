@@ -3,9 +3,10 @@ import { action } from "@ember/object";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import { eq, and, not } from "truth-helpers";
+import { eq } from "truth-helpers";
 import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
+import i18n from "discourse-common/helpers/i18n";
 
 export default class BadgeWall extends Component {
   @tracked isLoading = true;
@@ -13,23 +14,19 @@ export default class BadgeWall extends Component {
   @tracked earnedBadges = [];
   @tracked allBadges = [];
   @tracked stats = {};
-  @tracked activeTab = "collected"; // collected 或 all
-  
-  get userId() {
-    return this.args.userId;
-  }
-  
+  @tracked activeTab = "collected";
+
+  get userId() { return this.args.userId; }
+
   constructor() {
     super(...arguments);
     this.loadBadges();
   }
-  
+
   async loadBadges() {
     try {
       let url = "/custom-plugin/badge-wall";
-      if (this.userId) {
-        url += `?user_id=${this.userId}`;
-      }
+      if (this.userId) url += `?user_id=${this.userId}`;
       const result = await ajax(url);
       this.collections = result.collections;
       this.earnedBadges = result.earned_badges;
@@ -41,83 +38,92 @@ export default class BadgeWall extends Component {
       this.isLoading = false;
     }
   }
-  
+
   get displayBadges() {
-    if (this.activeTab === "collected") {
-      return this.collections.map(c => c.badge);
-    }
-    return this.earnedBadges;
+    return this.activeTab === "collected"
+      ? this.collections.map(c => c.badge)
+      : this.earnedBadges;
   }
-  
+
   get progressPercentage() {
     if (!this.stats.total) return 0;
     return Math.round((this.stats.collected / this.stats.total) * 100);
   }
-  
-  @action
-  switchTab(tab) {
-    this.activeTab = tab;
+
+  get isOwner() {
+    return !this.userId || this.userId === this.args.currentUserId;
   }
-  
+
+  @action switchTab(tab) { this.activeTab = tab; }
+
   @action
   async collectBadge(badge) {
     try {
-      const result = await ajax(`/custom-plugin/badge-wall/collect/${badge.id}`, {
-        type: "POST"
-      });
-      
+      const result = await ajax(`/custom-plugin/badge-wall/collect/${badge.id}`, { type: "POST" });
       if (result.success) {
-        // 更新状态
-        const index = this.earnedBadges.findIndex(b => b.id === badge.id);
-        if (index > -1) {
+        const idx = this.earnedBadges.findIndex(b => b.id === badge.id);
+        if (idx > -1) {
           this.earnedBadges = [
-            ...this.earnedBadges.slice(0, index),
-            { ...this.earnedBadges[index], collected: true },
-            ...this.earnedBadges.slice(index + 1)
+            ...this.earnedBadges.slice(0, idx),
+            { ...this.earnedBadges[idx], collected: true },
+            ...this.earnedBadges.slice(idx + 1)
           ];
         }
-        
         this.collections = [...this.collections, result.collection];
-        this.stats = {
-          ...this.stats,
-          collected: this.stats.collected + 1
-        };
+        this.stats = { ...this.stats, collected: this.stats.collected + 1 };
       }
     } catch (error) {
       popupAjaxError(error);
     }
   }
-  
+
+  @action
+  async uncollectBadge(badge) {
+    try {
+      const result = await ajax(`/custom-plugin/badge-wall/collect/${badge.id}`, { type: "DELETE" });
+      if (result.success) {
+        const idx = this.earnedBadges.findIndex(b => b.id === badge.id);
+        if (idx > -1) {
+          this.earnedBadges = [
+            ...this.earnedBadges.slice(0, idx),
+            { ...this.earnedBadges[idx], collected: false },
+            ...this.earnedBadges.slice(idx + 1)
+          ];
+        }
+        this.collections = this.collections.filter(c => c.badge.id !== badge.id);
+        this.stats = { ...this.stats, collected: Math.max(0, this.stats.collected - 1) };
+      }
+    } catch (error) {
+      popupAjaxError(error);
+    }
+  }
+
   <template>
     <div class="badge-wall">
       {{#if this.isLoading}}
-        <div class="loading-spinner">Loading...</div>
+        <div class="loading-spinner">{{i18n "custom_plugin.loading"}}</div>
       {{else}}
         <div class="badge-wall-header">
-          <h2>Badge Wall</h2>
+          <h2>{{i18n "custom_plugin.badge_wall.title"}}</h2>
           <div class="progress-info">
-            <span>Progress: {{this.stats.collected}}/{{this.stats.total}}</span>
+            <span>{{i18n "custom_plugin.badge_wall.progress"}}: {{this.stats.collected}}/{{this.stats.total}}</span>
             <div class="progress-bar">
               <div class="progress" style="width: {{this.progressPercentage}}%"></div>
             </div>
           </div>
         </div>
-        
+
         <div class="todo-tabs" style="margin-bottom: 20px;">
-          <button 
+          <button
             class="tab {{if (eq this.activeTab 'collected') 'active'}}"
             {{on "click" (fn this.switchTab "collected")}}
-          >
-            Collected ({{this.stats.collected}})
-          </button>
-          <button 
+          >{{i18n "custom_plugin.badge_wall.collected"}} ({{this.stats.collected}})</button>
+          <button
             class="tab {{if (eq this.activeTab 'earned') 'active'}}"
             {{on "click" (fn this.switchTab "earned")}}
-          >
-            Earned ({{this.stats.earned}})
-          </button>
+          >{{i18n "custom_plugin.badge_wall.earned"}} ({{this.stats.earned}})</button>
         </div>
-        
+
         {{#if this.displayBadges.length}}
           <div class="badge-grid">
             {{#each this.displayBadges as |badge|}}
@@ -136,27 +142,30 @@ export default class BadgeWall extends Component {
                 <div class="badge-name">{{badge.name}}</div>
                 <div class="badge-status">
                   {{#if badge.collected}}
-                    Collected
+                    {{i18n "custom_plugin.badge_wall.collected"}}
                   {{else if badge.earned}}
-                    Earned
+                    {{i18n "custom_plugin.badge_wall.earned"}}
                   {{else}}
-                    Not Earned
+                    {{i18n "custom_plugin.badge_wall.not_earned"}}
                   {{/if}}
                 </div>
-                {{#if (and badge.earned (not badge.collected))}}
-                  <button 
-                    class="collect-button"
-                    {{on "click" (fn this.collectBadge badge)}}
-                  >
-                    Collect
-                  </button>
+                {{#if badge.earned}}
+                  {{#if badge.collected}}
+                    <button class="collect-button uncollect" {{on "click" (fn this.uncollectBadge badge)}}>
+                      {{i18n "custom_plugin.badge_wall.uncollect"}}
+                    </button>
+                  {{else}}
+                    <button class="collect-button" {{on "click" (fn this.collectBadge badge)}}>
+                      {{i18n "custom_plugin.badge_wall.collect"}}
+                    </button>
+                  {{/if}}
                 {{/if}}
               </div>
             {{/each}}
           </div>
         {{else}}
           <div class="todo-empty">
-            <p>No badges collected yet</p>
+            <p>{{i18n "custom_plugin.badge_wall.empty"}}</p>
           </div>
         {{/if}}
       {{/if}}

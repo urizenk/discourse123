@@ -33,7 +33,7 @@ en:
       collected: "Badge collected"
       not_earned: "You haven't earned this badge yet"
       already_collected: "Badge already collected"
-    emoji:
+    custom_emoji:
       uploaded: "Emoji uploaded"
       deleted: "Emoji deleted"
       max_reached: "Maximum custom emoji reached"

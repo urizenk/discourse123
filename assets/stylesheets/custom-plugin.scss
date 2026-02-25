@@ -89,6 +89,9 @@
 
   .checkin-calendar {
     margin-top: 20px;
+    background: var(--primary-very-low);
+    border-radius: 10px;
+    padding: 14px;
 
     .calendar-header {
       display: flex;
@@ -98,6 +101,36 @@
 
       .month-title {
         font-weight: 600;
+        font-size: 14px;
+      }
+
+      .calendar-toggle {
+        padding: 4px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--primary-low);
+        background: var(--secondary);
+        font-size: 12px;
+        cursor: pointer;
+        color: var(--primary);
+
+        &:hover {
+          background: var(--primary-low);
+        }
+      }
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 6px;
+
+      span {
+        text-align: center;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--primary-medium);
+        padding: 4px 0;
       }
     }
 
@@ -113,16 +146,49 @@
         justify-content: center;
         border-radius: 50%;
         font-size: 12px;
+        color: var(--primary);
+        transition: all 0.2s;
+
+        &.empty {
+          visibility: hidden;
+        }
 
         &.checked {
           background: #228B22;
           color: #fff;
+          font-weight: 600;
         }
 
         &.today {
           border: 2px solid var(--tertiary);
+          font-weight: 700;
+        }
+
+        &.checked.today {
+          box-shadow: 0 0 0 2px var(--tertiary), inset 0 0 0 1px #228B22;
         }
       }
+    }
+  }
+}
+
+.extra-lottery-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+
+  .extra-lottery-info {
+    font-size: 13px;
+    opacity: 0.85;
+    margin: 0 0 12px;
+  }
+
+  .extra-lottery-btn {
+    background: linear-gradient(145deg, #667eea, #764ba2);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
     }
   }
 }
@@ -731,9 +797,20 @@
       border-radius: 4px;
       font-size: 11px;
       cursor: pointer;
+      transition: all 0.2s;
 
       &:hover {
         opacity: 0.9;
+      }
+
+      &.uncollect {
+        background: var(--primary-low);
+        color: var(--primary-medium);
+
+        &:hover {
+          background: var(--danger);
+          color: #fff;
+        }
       }
     }
   }

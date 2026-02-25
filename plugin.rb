@@ -69,6 +69,7 @@ after_initialize do
     get "/badge-wall" => "badge_wall#index"
     get "/badge-wall/:user_id" => "badge_wall#show"
     post "/badge-wall/collect/:badge_id" => "badge_wall#collect"
+    delete "/badge-wall/collect/:badge_id" => "badge_wall#uncollect"
     
     # 自定义表情
     get "/custom-emoji" => "custom_emoji#index"

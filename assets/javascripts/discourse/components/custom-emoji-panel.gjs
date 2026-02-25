@@ -5,19 +5,20 @@ import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
+import i18n from "discourse-common/helpers/i18n";
+import I18n from "discourse-i18n";
 
 export default class CustomEmojiPanel extends Component {
   @tracked isLoading = true;
   @tracked emojis = [];
   @tracked stats = {};
   @tracked isUploading = false;
-  @tracked newEmojiName = "";
-  
+
   constructor() {
     super(...arguments);
     this.loadEmojis();
   }
-  
+
   async loadEmojis() {
     try {
       const result = await ajax("/custom-plugin/custom-emoji");
@@ -29,7 +30,7 @@ export default class CustomEmojiPanel extends Component {
       this.isLoading = false;
     }
   }
-  
+
   @action
   triggerUpload() {
     const input = document.createElement("input");
@@ -38,53 +39,36 @@ export default class CustomEmojiPanel extends Component {
     input.onchange = (e) => this.handleFileSelect(e);
     input.click();
   }
-  
+
   @action
   async handleFileSelect(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
-    // 检查文件大小
-    const maxSize = 256 * 1024; // 256KB
+
+    const maxSize = 256 * 1024;
     if (file.size > maxSize) {
-      alert("文件大小超过限制");
+      alert(I18n.t("custom_plugin.emoji.file_too_large"));
       return;
     }
-    
-    // 生成表情名称
-    const name = prompt("请输入表情名称（只能包含字母、数字和下划线）：");
+
+    const name = prompt(I18n.t("custom_plugin.emoji.name_prompt"));
     if (!name) return;
-    
+
     this.isUploading = true;
-    
     try {
-      // 先上传文件
       const formData = new FormData();
       formData.append("file", file);
       formData.append("type", "custom_emoji");
-      
       const uploadResult = await ajax("/uploads.json", {
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false
+        type: "POST", data: formData, processData: false, contentType: false
       });
-      
-      // 创建自定义表情
+
       const result = await ajax("/custom-plugin/custom-emoji", {
-        type: "POST",
-        data: {
-          upload_id: uploadResult.id,
-          name: name
-        }
+        type: "POST", data: { upload_id: uploadResult.id, name }
       });
-      
       if (result.success) {
         this.emojis = [result.emoji, ...this.emojis];
-        this.stats = {
-          ...this.stats,
-          count: this.stats.count + 1
-        };
+        this.stats = { ...this.stats, count: this.stats.count + 1 };
       }
     } catch (error) {
       popupAjaxError(error);
@@ -92,65 +76,51 @@ export default class CustomEmojiPanel extends Component {
       this.isUploading = false;
     }
   }
-  
+
   @action
   async deleteEmoji(emoji) {
-    if (!confirm("确定删除这个表情吗？")) return;
-    
+    if (!confirm(I18n.t("custom_plugin.emoji.delete_confirm"))) return;
     try {
-      await ajax(`/custom-plugin/custom-emoji/${emoji.id}`, {
-        type: "DELETE"
-      });
-      
+      await ajax(`/custom-plugin/custom-emoji/${emoji.id}`, { type: "DELETE" });
       this.emojis = this.emojis.filter(e => e.id !== emoji.id);
-      this.stats = {
-        ...this.stats,
-        count: this.stats.count - 1
-      };
+      this.stats = { ...this.stats, count: this.stats.count - 1 };
     } catch (error) {
       popupAjaxError(error);
     }
   }
-  
+
   <template>
     <div class="custom-emoji-panel">
       <div class="emoji-header">
-        <h3>My Emoji</h3>
+        <h3>{{i18n "custom_plugin.emoji.title"}}</h3>
         <span class="emoji-count">{{this.stats.count}}/{{this.stats.max}}</span>
       </div>
-      
+
       <div class="emoji-upload" role="button" {{on "click" this.triggerUpload}}>
         {{#if this.isUploading}}
-          <p>Uploading...</p>
+          <p>{{i18n "custom_plugin.emoji.uploading"}}</p>
         {{else}}
-          <svg viewBox="0 0 24 24">
-            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-          </svg>
-          <p>Click to upload emoji</p>
-          <p class="size-hint">Max 256KB</p>
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          <p>{{i18n "custom_plugin.emoji.upload"}}</p>
+          <p class="size-hint">{{i18n "custom_plugin.emoji.size_limit"}}</p>
         {{/if}}
       </div>
-      
+
       {{#if this.isLoading}}
-        <div class="loading-spinner">Loading...</div>
+        <div class="loading-spinner">{{i18n "custom_plugin.loading"}}</div>
       {{else if this.emojis.length}}
         <div class="emoji-grid">
           {{#each this.emojis as |emoji|}}
             <div class="emoji-item">
               <img src={{emoji.url}} alt={{emoji.name}} />
               <div class="emoji-name">:{{emoji.name}}:</div>
-              <button 
-                class="emoji-delete"
-                {{on "click" (fn this.deleteEmoji emoji)}}
-              >
-                x
-              </button>
+              <button class="emoji-delete" {{on "click" (fn this.deleteEmoji emoji)}}>×</button>
             </div>
           {{/each}}
         </div>
       {{else}}
         <div class="todo-empty">
-          <p>No custom emoji yet</p>
+          <p>{{i18n "custom_plugin.emoji.empty"}}</p>
         </div>
       {{/if}}
     </div>

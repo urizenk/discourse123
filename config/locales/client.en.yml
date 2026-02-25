@@ -2,53 +2,78 @@ en:
   js:
     custom_plugin:
       title: "Personal Center"
-      
+      loading: "Loading..."
+      collapse: "Collapse"
+      expand: "Expand"
+      add: "Add"
+
+      tabs:
+        checkin: "Daily Check-in"
+        todo: "To Do List"
+        badges: "Badge Wall"
+        emoji: "My Emoji"
+
       checkin:
         title: "Daily Check-in"
-        button: "Check In"
+        button: "Check In Now"
+        checking_in: "Checking in..."
         checked_in: "Checked In"
-        consecutive_days: "Consecutive %{days} days"
-        total_points: "Total Points: %{points}"
-        today_points: "Today: +%{points}"
+        points_earned: "+%{points} points"
+        streak: "%{days} days streak"
+        stat_total: "Total"
+        stat_points: "Points"
+        stat_month: "This Month"
         lottery:
           title: "Lucky Draw"
           button: "Draw Now"
+          drawing: "Drawing..."
           description: "Get a chance to draw after check-in"
-          prizes: "Prize Pool"
-          history: "History"
           no_chance: "No chance available"
+          won: "Won: %{prize}"
+          congratulations: "Congratulations!"
+          ok: "OK"
+          extra_draw: "Extra Draw (-%{cost} pts)"
+          extra_info: "Spend %{cost} points for extra draw (%{remaining} left)"
         calendar:
           title: "Calendar"
-          this_month: "This Month"
-      
+          hide: "Hide"
+          show: "Calendar"
+
       todo:
         title: "My Todo"
-        add_placeholder: "Add new todo..."
-        empty: "No todos yet"
+        add_placeholder: "Add new item..."
+        add_image: "Add image"
+        empty: "No items yet"
         completed: "Completed"
         pending: "Pending"
         tabs:
-          todo: "Todo List"
+          todo: "To Do List"
           wish: "Wish List"
-        delete_confirm: "Are you sure you want to delete this todo?"
-      
+        priority:
+          important: "Important"
+          urgent: "Urgent"
+        delete_confirm: "Are you sure you want to delete this item?"
+
       badge_wall:
         title: "Badge Wall"
-        my_badges: "My Badges"
-        all_badges: "All Badges"
         collected: "Collected"
-        not_collected: "Not Collected"
         earned: "Earned"
         not_earned: "Not Earned"
         collect: "Collect"
         uncollect: "Uncollect"
         progress: "Progress"
-        empty: "No collected badges yet"
-      
+        empty: "No badges collected yet"
+
       emoji:
         title: "My Emoji"
-        upload: "Upload Emoji"
+        upload: "Click to upload emoji"
+        uploading: "Uploading..."
         empty: "No custom emoji yet"
         delete_confirm: "Are you sure you want to delete this emoji?"
-        drag_hint: "Drag image here to upload"
-        size_limit: "Max %{size}KB"
+        size_limit: "Max 256KB"
+        name_prompt: "Enter emoji name (letters, numbers, underscores only):"
+        file_too_large: "File size exceeds the limit"
+
+      user_card:
+        badge_wall: "Badge Wall"
+        todo_list: "To Do List"
