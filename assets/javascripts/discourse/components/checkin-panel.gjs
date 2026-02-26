@@ -4,10 +4,20 @@ import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { or, not } from "truth-helpers";
-import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
+import { htmlSafe } from "@ember/template";
 import i18n from "discourse-common/helpers/i18n";
-import I18n from "discourse-i18n";
+
+const WHEEL_PRIZES = [
+  { label: "10 pts", color: "#F97316" },
+  { label: "20 pts", color: "#FEF3C7" },
+  { label: "50 pts", color: "#F97316" },
+  { label: "Lucky!", color: "#FEF3C7" },
+  { label: "5 pts",  color: "#F97316" },
+  { label: "30 pts", color: "#FEF3C7" },
+  { label: "100 pts",color: "#F97316" },
+  { label: "Bonus",  color: "#FEF3C7" },
+];
 
 export default class CheckinPanel extends Component {
   @tracked isLoading = true;
@@ -23,11 +33,8 @@ export default class CheckinPanel extends Component {
   @tracked showPrizeModal = false;
   @tracked wonPrize = null;
 
-  @tracked showSlotMachine = false;
-  @tracked slot1 = "?";
-  @tracked slot2 = "?";
-  @tracked slot3 = "?";
-  @tracked slotAnimating = false;
+  @tracked wheelAngle = 0;
+  @tracked isSpinning = false;
 
   @tracked canBuyDraw = false;
   @tracked extraDrawCost = 50;
@@ -37,7 +44,7 @@ export default class CheckinPanel extends Component {
   @tracked calendarDates = [];
   @tracked showCalendar = false;
 
-  slotSymbols = ["7", "★", "♦", "♣", "♥", "♠"];
+  @tracked showConfetti = false;
 
   constructor() {
     super(...arguments);
@@ -67,6 +74,13 @@ export default class CheckinPanel extends Component {
     }
   }
 
+  get wheelStyle() {
+    const transition = this.isSpinning
+      ? "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)"
+      : "none";
+    return htmlSafe(`transform: rotate(${this.wheelAngle}deg); transition: ${transition};`);
+  }
+
   @action
   async doCheckin() {
     if (this.isCheckinLoading || this.checkedInToday) return;
@@ -90,49 +104,39 @@ export default class CheckinPanel extends Component {
   async doLottery() {
     if (this.isDrawing || !this.canDraw) return;
     this.isDrawing = true;
-    this.showSlotMachine = true;
-    this.slotAnimating = true;
-    this._animateSlots(() => this._finishLottery());
+    this._spinWheel(() => this._finishLottery());
   }
 
   @action
   async doExtraLottery() {
     if (this.isDrawing || !this.canBuyDraw) return;
     this.isDrawing = true;
-    this.showSlotMachine = true;
-    this.slotAnimating = true;
-    this._animateSlots(() => this._finishExtraLottery());
+    this._spinWheel(() => this._finishExtraLottery());
   }
 
-  _animateSlots(callback) {
-    let count = 0;
-    const animate = () => {
-      this.slot1 = this.slotSymbols[Math.floor(Math.random() * 6)];
-      this.slot2 = this.slotSymbols[Math.floor(Math.random() * 6)];
-      this.slot3 = this.slotSymbols[Math.floor(Math.random() * 6)];
-      count++;
-      if (count < 20) {
-        setTimeout(animate, 100 + count * 10);
-      } else {
-        callback();
-      }
-    };
-    animate();
+  _spinWheel(callback) {
+    const extraRotations = 1800 + Math.random() * 1080;
+    this.wheelAngle += extraRotations;
+    this.isSpinning = true;
+    setTimeout(() => {
+      this.isSpinning = false;
+      callback();
+    }, 4200);
   }
 
   async _finishLottery() {
     try {
       const result = await ajax("/custom-plugin/checkin/draw", { type: "POST" });
       if (result.success) {
-        this.slot1 = this.slot2 = this.slot3 = "★";
         this.wonPrize = result.prize;
         this.todayPrize = result.prize;
         this.canDraw = false;
-        setTimeout(() => { this.slotAnimating = false; this.showPrizeModal = true; }, 500);
+        this.showConfetti = true;
+        setTimeout(() => { this.showPrizeModal = true; }, 300);
+        setTimeout(() => { this.showConfetti = false; }, 3000);
       }
     } catch (error) {
       popupAjaxError(error);
-      this.slotAnimating = false;
     } finally {
       this.isDrawing = false;
     }
@@ -142,16 +146,16 @@ export default class CheckinPanel extends Component {
     try {
       const result = await ajax("/custom-plugin/checkin/extra-draw", { type: "POST" });
       if (result.success) {
-        this.slot1 = this.slot2 = this.slot3 = "★";
         this.wonPrize = result.prize;
         this.userPoints = result.remaining_points;
         this.extraDrawsRemaining = result.extra_draws_remaining;
         this.canBuyDraw = this.extraDrawsRemaining > 0 && this.userPoints >= this.extraDrawCost;
-        setTimeout(() => { this.slotAnimating = false; this.showPrizeModal = true; }, 500);
+        this.showConfetti = true;
+        setTimeout(() => { this.showPrizeModal = true; }, 300);
+        setTimeout(() => { this.showConfetti = false; }, 3000);
       }
     } catch (error) {
       popupAjaxError(error);
-      this.slotAnimating = false;
     } finally {
       this.isDrawing = false;
     }
@@ -256,15 +260,44 @@ export default class CheckinPanel extends Component {
               <p>{{i18n "custom_plugin.checkin.lottery.description"}}</p>
             </div>
 
-            {{#if this.showSlotMachine}}
-              <div class="slot-machine {{if this.slotAnimating 'animating'}}">
-                <div class="slot-container">
-                  <div class="slot-reel"><span class="slot-symbol">{{this.slot1}}</span></div>
-                  <div class="slot-reel"><span class="slot-symbol">{{this.slot2}}</span></div>
-                  <div class="slot-reel"><span class="slot-symbol">{{this.slot3}}</span></div>
+            {{! ===== 转盘抽奖 ===== }}
+            <div class="wheel-wrapper">
+              <div class="wheel-pointer">
+                <svg viewBox="0 0 40 50" width="30" height="38">
+                  <polygon points="20,50 0,0 40,0" fill="#E11D48" stroke="#fff" stroke-width="2"/>
+                  <circle cx="20" cy="12" r="6" fill="#fff"/>
+                </svg>
+              </div>
+              <div class="wheel-outer">
+                <div class="wheel-face" style={{this.wheelStyle}}>
+                  <svg viewBox="0 0 300 300" class="wheel-svg">
+                    <circle cx="150" cy="150" r="148" fill="#1a1a2e" stroke="#FFD700" stroke-width="4"/>
+                    <g>
+                      <path d="M150,150 L150,2 A148,148 0 0,1 254.7,45.3 Z" fill="#F97316"/>
+                      <path d="M150,150 L254.7,45.3 A148,148 0 0,1 298,150 Z" fill="#FEF3C7"/>
+                      <path d="M150,150 L298,150 A148,148 0 0,1 254.7,254.7 Z" fill="#F97316"/>
+                      <path d="M150,150 L254.7,254.7 A148,148 0 0,1 150,298 Z" fill="#FEF3C7"/>
+                      <path d="M150,150 L150,298 A148,148 0 0,1 45.3,254.7 Z" fill="#F97316"/>
+                      <path d="M150,150 L45.3,254.7 A148,148 0 0,1 2,150 Z" fill="#FEF3C7"/>
+                      <path d="M150,150 L2,150 A148,148 0 0,1 45.3,45.3 Z" fill="#F97316"/>
+                      <path d="M150,150 L45.3,45.3 A148,148 0 0,1 150,2 Z" fill="#FEF3C7"/>
+                    </g>
+                    <g font-size="13" font-weight="bold" text-anchor="middle" dominant-baseline="middle">
+                      <text transform="rotate(-67.5,150,150) translate(150,40)" fill="#fff">10 pts</text>
+                      <text transform="rotate(-22.5,150,150) translate(150,40)" fill="#92400E">20 pts</text>
+                      <text transform="rotate(22.5,150,150) translate(150,40)" fill="#fff">50 pts</text>
+                      <text transform="rotate(67.5,150,150) translate(150,40)" fill="#92400E">Lucky!</text>
+                      <text transform="rotate(112.5,150,150) translate(150,40)" fill="#fff">5 pts</text>
+                      <text transform="rotate(157.5,150,150) translate(150,40)" fill="#92400E">30 pts</text>
+                      <text transform="rotate(202.5,150,150) translate(150,40)" fill="#fff">100 pts</text>
+                      <text transform="rotate(247.5,150,150) translate(150,40)" fill="#92400E">Bonus</text>
+                    </g>
+                    <circle cx="150" cy="150" r="25" fill="#FFD700" stroke="#fff" stroke-width="3"/>
+                    <text x="150" y="153" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a1a2e">GO</text>
+                  </svg>
                 </div>
               </div>
-            {{/if}}
+            </div>
 
             <button
               class="lottery-button"
@@ -304,13 +337,35 @@ export default class CheckinPanel extends Component {
         {{/if}}
       {{/if}}
 
+      {{! ===== 中奖弹窗 ===== }}
       {{#if this.showPrizeModal}}
         <div class="prize-modal-overlay" {{on "click" this.closePrizeModal}}>
           <div class="prize-modal" {{on "click" this.stopPropagation}}>
+            <div class="prize-modal-sparkles">
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
             <h3>{{i18n "custom_plugin.checkin.lottery.congratulations"}}</h3>
             <div class="prize-display">{{this.wonPrize}}</div>
-            <button {{on "click" this.closePrizeModal}}>{{i18n "custom_plugin.checkin.lottery.ok"}}</button>
+            <button class="prize-modal-btn" {{on "click" this.closePrizeModal}}>{{i18n "custom_plugin.checkin.lottery.ok"}}</button>
           </div>
+        </div>
+      {{/if}}
+
+      {{! ===== 彩纸效果 ===== }}
+      {{#if this.showConfetti}}
+        <div class="confetti-container">
+          <div class="confetti c1"></div>
+          <div class="confetti c2"></div>
+          <div class="confetti c3"></div>
+          <div class="confetti c4"></div>
+          <div class="confetti c5"></div>
+          <div class="confetti c6"></div>
+          <div class="confetti c7"></div>
+          <div class="confetti c8"></div>
+          <div class="confetti c9"></div>
+          <div class="confetti c10"></div>
+          <div class="confetti c11"></div>
+          <div class="confetti c12"></div>
         </div>
       {{/if}}
     </div>

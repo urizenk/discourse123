@@ -47,11 +47,11 @@ export default class CustomEmojiPanel extends Component {
 
     const maxSize = 256 * 1024;
     if (file.size > maxSize) {
-      alert(I18n.t("custom_plugin.emoji.file_too_large"));
+      alert(I18n.t("js.custom_plugin.emoji.file_too_large"));
       return;
     }
 
-    const name = prompt(I18n.t("custom_plugin.emoji.name_prompt"));
+    const name = prompt(I18n.t("js.custom_plugin.emoji.name_prompt"));
     if (!name) return;
 
     this.isUploading = true;
@@ -79,7 +79,7 @@ export default class CustomEmojiPanel extends Component {
 
   @action
   async deleteEmoji(emoji) {
-    if (!confirm(I18n.t("custom_plugin.emoji.delete_confirm"))) return;
+    if (!confirm(I18n.t("js.custom_plugin.emoji.delete_confirm"))) return;
     try {
       await ajax(`/custom-plugin/custom-emoji/${emoji.id}`, { type: "DELETE" });
       this.emojis = this.emojis.filter(e => e.id !== emoji.id);

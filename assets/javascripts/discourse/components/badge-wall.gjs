@@ -1,5 +1,6 @@
 import Component from "@glimmer/component";
 import { action } from "@ember/object";
+import { inject as service } from "@ember/service";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
@@ -9,6 +10,7 @@ import { on } from "@ember/modifier";
 import i18n from "discourse-common/helpers/i18n";
 
 export default class BadgeWall extends Component {
+  @service currentUser;
   @tracked isLoading = true;
   @tracked collections = [];
   @tracked earnedBadges = [];
@@ -51,7 +53,7 @@ export default class BadgeWall extends Component {
   }
 
   get isOwner() {
-    return !this.userId || this.userId === this.args.currentUserId;
+    return this.currentUser && (!this.userId || this.userId === this.currentUser.id);
   }
 
   @action switchTab(tab) { this.activeTab = tab; }
@@ -149,15 +151,17 @@ export default class BadgeWall extends Component {
                     {{i18n "custom_plugin.badge_wall.not_earned"}}
                   {{/if}}
                 </div>
-                {{#if badge.earned}}
-                  {{#if badge.collected}}
-                    <button class="collect-button uncollect" {{on "click" (fn this.uncollectBadge badge)}}>
-                      {{i18n "custom_plugin.badge_wall.uncollect"}}
-                    </button>
-                  {{else}}
-                    <button class="collect-button" {{on "click" (fn this.collectBadge badge)}}>
-                      {{i18n "custom_plugin.badge_wall.collect"}}
-                    </button>
+                {{#if this.isOwner}}
+                  {{#if badge.earned}}
+                    {{#if badge.collected}}
+                      <button class="collect-button uncollect" {{on "click" (fn this.uncollectBadge badge)}}>
+                        {{i18n "custom_plugin.badge_wall.uncollect"}}
+                      </button>
+                    {{else}}
+                      <button class="collect-button" {{on "click" (fn this.collectBadge badge)}}>
+                        {{i18n "custom_plugin.badge_wall.collect"}}
+                      </button>
+                    {{/if}}
                   {{/if}}
                 {{/if}}
               </div>

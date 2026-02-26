@@ -114,7 +114,7 @@ export default class TodoPanel extends Component {
 
   @action
   async deleteTodo(todo) {
-    if (!confirm(I18n.t("custom_plugin.todo.delete_confirm"))) return;
+    if (!confirm(I18n.t("js.custom_plugin.todo.delete_confirm"))) return;
     try {
       await ajax(`/custom-plugin/todos/${todo.id}`, { type: "DELETE" });
       this.todos = this.todos.filter(t => t.id !== todo.id);
