@@ -11,20 +11,16 @@ enabled_site_setting :custom_plugin_enabled
 
 register_asset "stylesheets/custom-plugin.scss"
 
-after_initialize do
-  # ==========================================
-  # 模块加载
-  # ==========================================
-  
-  module ::DiscourseCustomPlugin
-    PLUGIN_NAME = "discourse-custom-plugin"
-    
-    class Engine < ::Rails::Engine
-      engine_name PLUGIN_NAME
-      isolate_namespace DiscourseCustomPlugin
-    end
-  end
+module ::DiscourseCustomPlugin
+  PLUGIN_NAME = "discourse-custom-plugin"
 
+  class Engine < ::Rails::Engine
+    engine_name PLUGIN_NAME
+    isolate_namespace DiscourseCustomPlugin
+  end
+end
+
+after_initialize do
   # ==========================================
   # 加载模型
   # ==========================================
