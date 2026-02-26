@@ -13,102 +13,91 @@ register_asset "stylesheets/custom-plugin.scss"
 
 module ::DiscourseCustomPlugin
   PLUGIN_NAME = "discourse-custom-plugin"
-
-  class Engine < ::Rails::Engine
-    engine_name PLUGIN_NAME
-    isolate_namespace DiscourseCustomPlugin
-  end
 end
 
 after_initialize do
   # ==========================================
   # 加载模型
   # ==========================================
-  
+
   require_relative "app/models/user_checkin"
   require_relative "app/models/user_todo"
   require_relative "app/models/user_badge_collection"
   require_relative "app/models/custom_emoji"
   require_relative "app/models/extra_lottery_record"
-  
+
   # ==========================================
   # 加载控制器
   # ==========================================
-  
+
   require_relative "app/controllers/checkin_controller"
   require_relative "app/controllers/todos_controller"
   require_relative "app/controllers/badge_wall_controller"
   require_relative "app/controllers/custom_emoji_controller"
-  
+
   # ==========================================
   # 路由配置
   # ==========================================
-  
-  DiscourseCustomPlugin::Engine.routes.draw do
-    # 签到系统
-    get "/checkin" => "checkin#show"
-    post "/checkin" => "checkin#create"
-    get "/checkin/history" => "checkin#history"
-    get "/checkin/lottery" => "checkin#lottery"
-    post "/checkin/draw" => "checkin#draw"
-    post "/checkin/extra-draw" => "checkin#extra_draw"
-    
-    # To Do List
-    resources :todos, only: [:index, :create, :update, :destroy] do
-      member do
-        put :toggle
-        put :reorder
-      end
-    end
-    
-    # 徽章墙
-    get "/badge-wall" => "badge_wall#index"
-    get "/badge-wall/:user_id" => "badge_wall#show"
-    post "/badge-wall/collect/:badge_id" => "badge_wall#collect"
-    delete "/badge-wall/collect/:badge_id" => "badge_wall#uncollect"
-    
-    # 自定义表情
-    get "/custom-emoji" => "custom_emoji#index"
-    post "/custom-emoji" => "custom_emoji#create"
-    delete "/custom-emoji/:id" => "custom_emoji#destroy"
-  end
 
   Discourse::Application.routes.append do
-    mount ::DiscourseCustomPlugin::Engine, at: "/custom-plugin"
+    scope "/custom-plugin", module: "discourse_custom_plugin" do
+      get "/checkin" => "checkin#show"
+      post "/checkin" => "checkin#create"
+      get "/checkin/history" => "checkin#history"
+      get "/checkin/lottery" => "checkin#lottery"
+      post "/checkin/draw" => "checkin#draw"
+      post "/checkin/extra-draw" => "checkin#extra_draw"
+
+      get "/todos" => "todos#index"
+      post "/todos" => "todos#create"
+      put "/todos/:id" => "todos#update"
+      delete "/todos/:id" => "todos#destroy"
+      put "/todos/:id/toggle" => "todos#toggle"
+      put "/todos/:id/reorder" => "todos#reorder"
+
+      get "/badge-wall" => "badge_wall#index"
+      get "/badge-wall/:user_id" => "badge_wall#show"
+      post "/badge-wall/collect/:badge_id" => "badge_wall#collect"
+      delete "/badge-wall/collect/:badge_id" => "badge_wall#uncollect"
+
+      get "/custom-emoji" => "custom_emoji#index"
+      post "/custom-emoji" => "custom_emoji#create"
+      delete "/custom-emoji/:id" => "custom_emoji#destroy"
+    end
   end
 
   # ==========================================
   # 用户扩展
   # ==========================================
-  
+
   add_to_class(:user, :checkins) do
     return DiscourseCustomPlugin::UserCheckin.none unless ActiveRecord::Base.connection.table_exists?(:user_checkins)
     DiscourseCustomPlugin::UserCheckin.where(user_id: id)
   rescue
     DiscourseCustomPlugin::UserCheckin.none
   end
-  
+
   add_to_class(:user, :todos) do
     return DiscourseCustomPlugin::UserTodo.none unless ActiveRecord::Base.connection.table_exists?(:user_todos)
     DiscourseCustomPlugin::UserTodo.where(user_id: id)
   rescue
     DiscourseCustomPlugin::UserTodo.none
   end
-  
+
   add_to_class(:user, :badge_collections) do
     return DiscourseCustomPlugin::UserBadgeCollection.none unless ActiveRecord::Base.connection.table_exists?(:user_badge_collections)
     DiscourseCustomPlugin::UserBadgeCollection.where(user_id: id)
   rescue
     DiscourseCustomPlugin::UserBadgeCollection.none
   end
-  
+
   add_to_class(:user, :custom_emojis) do
     return DiscourseCustomPlugin::CustomEmoji.none unless ActiveRecord::Base.connection.table_exists?(:plugin_custom_emojis)
     DiscourseCustomPlugin::CustomEmoji.where(user_id: id)
   rescue
     DiscourseCustomPlugin::CustomEmoji.none
   end
-  
+
   add_to_class(:user, :checked_in_today?) do
     return false unless ActiveRecord::Base.connection.table_exists?(:user_checkins)
     DiscourseCustomPlugin::UserCheckin.exists?(
@@ -118,16 +107,16 @@ after_initialize do
   rescue
     false
   end
-  
+
   add_to_class(:user, :consecutive_checkin_days) do
     return 0 unless ActiveRecord::Base.connection.table_exists?(:user_checkins)
     checkins = DiscourseCustomPlugin::UserCheckin
       .where(user_id: id)
       .order(checked_in_at: :desc)
       .pluck(:checked_in_at)
-    
+
     return 0 if checkins.empty?
-    
+
     days = 1
     checkins.each_cons(2) do |current, previous|
       if (current.to_date - previous.to_date).to_i == 1
@@ -144,7 +133,7 @@ after_initialize do
   # ==========================================
   # 序列化器扩展
   # ==========================================
-  
+
   add_to_serializer(:current_user, :checked_in_today) do
     return false unless object
     return false unless ActiveRecord::Base.connection.table_exists?(:user_checkins)
@@ -152,7 +141,7 @@ after_initialize do
   rescue
     false
   end
-  
+
   add_to_serializer(:current_user, :consecutive_checkin_days) do
     return 0 unless object
     return 0 unless ActiveRecord::Base.connection.table_exists?(:user_checkins)
@@ -160,7 +149,7 @@ after_initialize do
   rescue
     0
   end
-  
+
   add_to_serializer(:current_user, :todo_count) do
     return 0 unless object
     return 0 unless ActiveRecord::Base.connection.table_exists?(:user_todos)
@@ -168,7 +157,7 @@ after_initialize do
   rescue
     0
   end
-  
+
   add_to_serializer(:current_user, :badge_collection_count) do
     return 0 unless object
     return 0 unless ActiveRecord::Base.connection.table_exists?(:user_badge_collections)
