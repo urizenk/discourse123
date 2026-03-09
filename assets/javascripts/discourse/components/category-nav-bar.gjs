@@ -7,9 +7,9 @@ import { modifier } from "ember-modifier";
 
 const NAV_ITEMS = [
   { id: "user-guide", label: "User Guide & Perks", slug: "user-guide-perks", rotate: true, icon: "nav-user-guide.png", bg: "nav-bg-stripe-diag.png" },
-  { id: "say-hi", label: "Say Hi To Everyone", slug: "say-hi-to-everyone", rotate: false, icon: "nav-say-hi.png", bg: null },
-  { id: "spin-win", label: "Spin & WIN", slug: "check-in-to-win", rotate: true, icon: "nav-spin-win.png", bg: null },
-  { id: "showcase", label: "Showcase & Story", slug: "showcase-stories", rotate: false, icon: "nav-showcase.png", bg: null },
+  { id: "say-hi", label: "Say Hi to Everyone", slug: "say-hi-to-everyone", rotate: false, icon: "nav-say-hi.png", bg: null },
+  { id: "spin-win", label: "Check in to Win", slug: "check-in-to-win", rotate: true, icon: "nav-spin-win.png", bg: null },
+  { id: "showcase", label: "Showcase & Stories", slug: "showcase-stories", rotate: false, icon: "nav-showcase.png", bg: null },
   { id: "diy-crafting", label: "DIY & Crafting Club", slug: "diy-crafting-club", rotate: false, icon: "nav-diy.png", bg: null },
   { id: "nanci-diary", label: "Nanci's Diary", slug: "nancis-diary", rotate: false, icon: "nav-nanci.png", bg: "nav-bg-stripe-vert.png" },
   { id: "new-arrivals", label: "New Arrivals", slug: "new-arrivals", rotate: true, icon: "nav-new-arrivals.png", bg: null },

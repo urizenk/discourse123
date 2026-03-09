@@ -1320,7 +1320,7 @@
   width: 100%;
   background: #F5A623;
   position: relative;
-  z-index: 100;
+  z-index: 10;
   padding: 10px 0;
 
   .nav-inner {
@@ -1406,7 +1406,7 @@
       object-fit: cover;
 
       &--solid {
-        background: linear-gradient(135deg, #fdf6ec, #f0e0c8);
+        background: #1a1a1a;
       }
     }
 
@@ -1717,18 +1717,21 @@ body {
 
 .category-header-banner {
   max-width: 1600px;
-  margin: 0 auto 20px;
-  padding: 20px 30px;
-  background: linear-gradient(135deg, #fdf8f0 0%, #f5ebe0 100%);
-  border-radius: 12px;
+  margin: 0 auto 16px;
+  padding: 16px 24px;
+  background: #fff;
+  border-radius: 10px;
+  border-left: 4px solid #E45735;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 
   .banner-icon {
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
+    margin-top: 2px;
 
     img {
       width: 100%;
@@ -1739,29 +1742,30 @@ body {
 
   .banner-text {
     flex: 1;
+    min-width: 0;
 
     .banner-title {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 700;
       font-family: 'Roboto', system-ui, sans-serif;
       color: var(--primary);
-      margin: 0 0 4px;
-    }
-
-    .banner-description {
-      font-size: 16px;
-      color: var(--primary-medium);
       margin: 0 0 6px;
     }
 
-    .banner-link {
+    .banner-description {
       font-size: 14px;
-      color: var(--tertiary);
-      text-decoration: none;
-      font-weight: 500;
+      line-height: 1.5;
+      color: var(--primary-medium);
+      margin: 0;
 
-      &:hover {
-        text-decoration: underline;
+      a {
+        color: var(--tertiary);
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }
@@ -1817,15 +1821,22 @@ body {
 // 新话题对话框 z-index 修复
 // ==========================================
 
-.d-editor-modal,
-.composer-popup,
 #reply-control {
   z-index: 1050 !important;
+
+  .d-editor-modal,
+  .composer-popup {
+    z-index: 1060 !important;
+  }
 }
 
 .modal-backdrop,
 .d-modal {
   z-index: 1040 !important;
+}
+
+.d-header-wrap {
+  z-index: 1001 !important;
 }
 
 // ==========================================
