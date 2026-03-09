@@ -1280,38 +1280,44 @@
   }
 }
 
-// ROBOTIME logo 替换默认 Discourse logo
-.d-header .logo-big,
-.d-header .logo-small,
-.d-header #site-logo {
-  display: none !important;
-}
-
+// ROBOTIME logo — 隐藏所有默认 logo 元素，用伪元素注入
 .d-header .title {
-  a::before {
+  position: relative;
+
+  a {
+    font-size: 0 !important;
+    color: transparent !important;
+  }
+
+  img,
+  .logo-big,
+  .logo-small,
+  #site-logo,
+  .logo-text,
+  svg {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  &::after {
     content: "ROBOTIME";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
     display: inline-block;
     background: #E45735;
     color: #fff;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 800;
     font-family: 'Roboto', system-ui, sans-serif;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     padding: 5px 14px;
     border-radius: 20px;
-    text-decoration: none;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 10;
   }
-
-  // 隐藏默认的 site title 文字
-  .logo-text,
-  img {
-    display: none !important;
-  }
-}
-
-// 隐藏 hamburger 菜单（我们用自定义侧栏）
-.d-header .hamburger-dropdown {
-  display: none !important;
 }
 
 // 自定义顶部链接条（header 内嵌）
@@ -1670,6 +1676,7 @@
       aspect-ratio: 4 / 3;
       background: #555;
       border-radius: 16px;
+      pointer-events: none;
     }
   }
 }
@@ -1768,9 +1775,17 @@
   // 隐藏 Search chat 及其他底部元素
   .sidebar-more-section-links-details,
   .sidebar-sections__back-to-forum,
-  .sidebar-section-link-wrapper[data-list-item-name="chat"] {
+  .sidebar-section-link-wrapper[data-list-item-name="chat"],
+  .sidebar-section-link-wrapper[data-list-item-name="search-chat"] {
     display: none !important;
   }
+}
+
+// 全局隐藏 chat 相关侧边栏元素
+.sidebar-section-link[data-link-name="chat"],
+a.sidebar-section-link[href*="chat"],
+.sidebar-section-link-wrapper:has(a[href*="chat"]) {
+  display: none !important;
 }
 
 // ==========================================
