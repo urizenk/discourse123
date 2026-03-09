@@ -16,6 +16,9 @@ module ::DiscourseCustomPlugin
   PLUGIN_NAME = "discourse-custom-plugin"
 end
 
+register_topic_thumbnail_size [360, 360]
+register_topic_thumbnail_size [720, 500]
+
 after_initialize do
   # ==========================================
   # 加载模型
