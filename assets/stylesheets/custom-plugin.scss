@@ -1852,11 +1852,81 @@ body {
 
 // -- 平板竖屏 / 大手机横屏 --
 @media (max-width: 768px) {
-  // 话题列表：单列卡片
+  // 强制移动端话题列表使用桌面 table 结构时的卡片布局
   .topic-list {
+    display: grid !important;
     grid-template-columns: 1fr !important;
     gap: 12px;
     padding: 0 !important;
+    border: none !important;
+
+    thead { display: none !important; }
+    tbody { display: contents !important; }
+
+    .topic-list-item {
+      display: block !important;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+      border: none !important;
+
+      td {
+        display: block !important;
+        padding: 0 !important;
+        border: none !important;
+        width: 100% !important;
+      }
+
+      td.posters,
+      td.views,
+      td.activity,
+      td.replies,
+      td.likes,
+      td.num { display: none !important; }
+
+      td.main-link {
+        display: block !important;
+      }
+
+      .topic-thumbnail {
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        overflow: hidden;
+        display: block !important;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+      }
+    }
+  }
+
+  // Discourse 移动端专有的 topic-list-item 内部结构
+  .topic-item-mobile {
+    display: block !important;
+  }
+
+  // 隐藏移动端话题列表里的头像列
+  .topic-list .posters,
+  .topic-list-item .posters {
+    display: none !important;
+  }
+
+  // 隐藏默认的 navigation-container 里面的 tab 按钮（categories | tags | Latest）
+  // 保留但简化，不完全隐藏以免影响切换
+  .navigation-container {
+    margin-bottom: 8px !important;
+    padding: 0 8px;
+
+    .navigation-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
   }
 
   // 黑色顶栏：缩小 logo，链接隐藏交给 Discourse 汉堡菜单
@@ -1894,9 +1964,19 @@ body {
     display: none !important;
   }
 
-  // 主内容区边距
+  .sidebar-wrapper {
+    display: none !important;
+  }
+
+  // 主内容区边距 — 移动端全宽
   #main-outlet {
-    padding: 8px;
+    padding: 8px !important;
+    width: 100% !important;
+  }
+
+  // 内容区在移动端不留左侧空间
+  #main-outlet-wrapper {
+    display: block !important;
   }
 
   // 各面板缩小内边距
@@ -2012,26 +2092,30 @@ body {
     .nav-items { gap: 6px; }
   }
 
-  // 话题卡片细节
-  .topic-list .topic-list-item {
-    border-radius: 8px;
+  // 话题卡片细节 — 移动端强制单列卡片
+  .topic-list {
+    gap: 10px !important;
 
-    td.main-link {
-      .link-top-line {
-        padding: 8px 10px 3px;
-        .title { font-size: 13px; }
+    .topic-list-item {
+      border-radius: 8px;
+
+      td.main-link {
+        .link-top-line {
+          padding: 8px 10px 3px;
+          .title { font-size: 13px; }
+        }
+        .link-bottom-line {
+          padding: 3px 10px 8px;
+          font-size: 11px;
+        }
       }
-      .link-bottom-line {
-        padding: 3px 10px 8px;
-        font-size: 11px;
-      }
+
+      .topic-thumbnail { aspect-ratio: 16 / 9; }
     }
-
-    .topic-thumbnail { aspect-ratio: 16 / 9; }
   }
 
   // 主内容区
-  #main-outlet { padding: 4px; }
+  #main-outlet { padding: 4px !important; }
 
   // 签到面板
   .checkin-panel {

@@ -8,6 +8,8 @@ export default apiInitializer("1.0.0", (api) => {
       columns.delete("activity");
       return columns;
     });
+
+    api.registerValueTransformer("topic-list-item-mobile-layout", () => false);
   } catch (e) {
     // registerValueTransformer may not exist in older Discourse
   }
