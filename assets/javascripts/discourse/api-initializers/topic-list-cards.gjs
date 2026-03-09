@@ -5,7 +5,6 @@ export default apiInitializer("1.0.0", (api) => {
     api.registerValueTransformer("topic-list-columns", ({ value: columns }) => {
       columns.delete("posters");
       columns.delete("views");
-      columns.delete("activity");
       return columns;
     });
 
@@ -36,6 +35,16 @@ export default apiInitializer("1.0.0", (api) => {
         get prefixValue() { return "envelope"; }
       };
 
+      const InviteFriendsLink = class extends BaseCustomSidebarSectionLink {
+        get name() { return "invite-friends"; }
+        get route() { return "userInvited"; }
+        get models() { return [api.getCurrentUser()?.username]; }
+        get text() { return "Invite Friends"; }
+        get title() { return "Invite Friends"; }
+        get prefixType() { return "icon"; }
+        get prefixValue() { return "user-plus"; }
+      };
+
       const TopicsLink = class extends BaseCustomSidebarSectionLink {
         get name() { return "topics"; }
         get href() { return "/latest"; }
@@ -54,6 +63,15 @@ export default apiInitializer("1.0.0", (api) => {
         get prefixValue() { return "question-circle"; }
       };
 
+      const HowToLink = class extends BaseCustomSidebarSectionLink {
+        get name() { return "how-to"; }
+        get href() { return "/c/how-to"; }
+        get text() { return "How To"; }
+        get title() { return "How To"; }
+        get prefixType() { return "icon"; }
+        get prefixValue() { return "book"; }
+      };
+
       const BadgesLink = class extends BaseCustomSidebarSectionLink {
         get name() { return "badges"; }
         get route() { return "badges"; }
@@ -70,12 +88,14 @@ export default apiInitializer("1.0.0", (api) => {
         get links() {
           if (!api.getCurrentUser()) return [];
           return [
-            new MyPostsLink(),
-            new MyMessagesLink(),
-            new TopicsLink(),
-            new HelpLink(),
-            new BadgesLink(),
-          ];
+                        new MyPostsLink(),
+                        new MyMessagesLink(),
+                        new InviteFriendsLink(),
+                        new TopicsLink(),
+                        new HelpLink(),
+                        new HowToLink(),
+                        new BadgesLink(),
+                      ];
         }
         get displaySection() { return true; }
       };

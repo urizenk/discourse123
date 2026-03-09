@@ -1318,10 +1318,10 @@
 
 .category-nav-bar {
   width: 100%;
-  background: #F5A623;
+  background: #1a1a1a;
   position: relative;
   z-index: 10;
-  padding: 10px 0;
+  padding: 12px 0;
 
   .nav-inner {
     max-width: 1600px;
@@ -1329,7 +1329,7 @@
     display: flex;
     align-items: center;
     padding: 0 16px;
-    gap: 8px;
+    gap: 10px;
   }
 
   .nav-arrow {
@@ -1337,8 +1337,8 @@
     height: 36px;
     min-width: 36px;
     border-radius: 50%;
-    border: none;
-    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.15);
     color: #fff;
     font-size: 20px;
     line-height: 1;
@@ -1349,10 +1349,10 @@
     transition: all 0.2s ease;
     flex-shrink: 0;
     z-index: 2;
-    backdrop-filter: blur(4px);
 
     &:hover {
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(255, 255, 255, 0.3);
+      border-color: #fff;
       transform: scale(1.1);
     }
   }
@@ -1371,12 +1371,12 @@
 
   .nav-items {
     display: flex;
-    gap: 12px;
+    gap: 14px;
     padding: 4px 4px;
   }
 
   .nav-card {
-    width: clamp(120px, 10vw, 155px);
+    width: clamp(130px, 11vw, 165px);
     aspect-ratio: 6 / 5;
     border-radius: 14px;
     overflow: hidden;
@@ -1387,12 +1387,14 @@
                 box-shadow 0.3s ease;
     text-decoration: none;
     display: block;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 215, 0, 0.5);
 
     &:hover {
       transform: scale(1.12) translateY(-6px);
       z-index: 5;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 8px 24px rgba(255, 215, 0, 0.3);
+      border-color: #FFD700;
     }
 
     &.rotate-on-hover:hover {
@@ -1424,10 +1426,10 @@
       padding: 6px 6px;
       text-align: center;
       color: #fff;
-      font-size: clamp(10px, 0.72vw, 13px);
+      font-size: clamp(10px, 0.75vw, 13px);
       font-weight: 700;
       font-family: 'Roboto', system-ui, sans-serif;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.8);
       z-index: 2;
       white-space: nowrap;
       overflow: hidden;
@@ -1499,7 +1501,10 @@
   margin: 0 auto;
 }
 
-.navigation-container { margin-bottom: 0 !important; }
+// 隐藏默认的 categories/tags/Latest 导航条
+.navigation-container {
+  display: none !important;
+}
 
 .topic-list {
   display: grid !important;
@@ -1535,10 +1540,36 @@
 
     td.posters,
     td.views,
-    td.activity,
-    td.replies,
     td.likes,
     td.num { display: none !important; }
+
+    td.replies {
+      display: inline-block !important;
+      order: 3;
+      padding: 0 14px 10px 14px !important;
+      font-size: 13px;
+      color: #888;
+      vertical-align: middle;
+
+      .posts-map {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .number { font-weight: 600; color: #666; }
+    }
+
+    td.activity {
+      display: inline-block !important;
+      order: 4;
+      padding: 0 14px 10px 0 !important;
+      font-size: 13px;
+      color: #888;
+      vertical-align: middle;
+
+      a { color: #888; text-decoration: none; }
+    }
 
     td.main-link {
       display: block !important;
@@ -1891,13 +1922,26 @@ body {
 
       td.posters,
       td.views,
-      td.activity,
-      td.replies,
       td.likes,
       td.num { display: none !important; }
 
       td.main-link {
         display: block !important;
+      }
+
+      td.replies {
+        display: inline-block !important;
+        padding: 0 10px 8px 10px !important;
+        font-size: 12px;
+        color: #888;
+      }
+
+      td.activity {
+        display: inline-block !important;
+        padding: 0 10px 8px 0 !important;
+        font-size: 12px;
+        color: #888;
+        a { color: #888; text-decoration: none; }
       }
 
       .topic-thumbnail {
@@ -1925,19 +1969,6 @@ body {
   .topic-list .posters,
   .topic-list-item .posters {
     display: none !important;
-  }
-
-  // 隐藏默认的 navigation-container 里面的 tab 按钮（categories | tags | Latest）
-  // 保留但简化，不完全隐藏以免影响切换
-  .navigation-container {
-    margin-bottom: 8px !important;
-    padding: 0 8px;
-
-    .navigation-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
   }
 
   // 黑色顶栏：缩小 logo，链接隐藏交给 Discourse 汉堡菜单
