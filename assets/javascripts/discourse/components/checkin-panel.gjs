@@ -8,16 +8,32 @@ import { on } from "@ember/modifier";
 import { htmlSafe } from "@ember/template";
 import i18n from "discourse-common/helpers/i18n";
 
-const WHEEL_PRIZES = [
-  { label: "10 pts", color: "#F97316" },
-  { label: "20 pts", color: "#FEF3C7" },
-  { label: "50 pts", color: "#F97316" },
-  { label: "Lucky!", color: "#FEF3C7" },
-  { label: "5 pts",  color: "#F97316" },
-  { label: "30 pts", color: "#FEF3C7" },
-  { label: "100 pts",color: "#F97316" },
-  { label: "Bonus",  color: "#FEF3C7" },
+const WHEEL_SEGMENTS = [
+  { label: "100 pts",     color: "#E11D48", textColor: "#fff" },
+  { label: "25 pts",      color: "#FEF3C7", textColor: "#92400E" },
+  { label: "5 pts",       color: "#F97316", textColor: "#fff" },
+  { label: "Try Again",   color: "#FEF3C7", textColor: "#92400E" },
+  { label: "Product!",    color: "#FFD700", textColor: "#1a1a2e" },
 ];
+
+const SEG_ANGLE = 360 / WHEEL_SEGMENTS.length; // 72 degrees per segment
+
+function segmentPath(index, total, radius) {
+  const angle = 360 / total;
+  const startAngle = (index * angle - 90) * (Math.PI / 180);
+  const endAngle = ((index + 1) * angle - 90) * (Math.PI / 180);
+  const x1 = 150 + radius * Math.cos(startAngle);
+  const y1 = 150 + radius * Math.sin(startAngle);
+  const x2 = 150 + radius * Math.cos(endAngle);
+  const y2 = 150 + radius * Math.sin(endAngle);
+  const largeArc = angle > 180 ? 1 : 0;
+  return `M150,150 L${x1},${y1} A${radius},${radius} 0 ${largeArc},1 ${x2},${y2} Z`;
+}
+
+function textTransform(index, total) {
+  const angle = (index + 0.5) * (360 / total) - 90;
+  return `rotate(${angle},150,150) translate(150,55)`;
+}
 
 export default class CheckinPanel extends Component {
   @tracked isLoading = true;
@@ -32,6 +48,7 @@ export default class CheckinPanel extends Component {
   @tracked isDrawing = false;
   @tracked showPrizeModal = false;
   @tracked wonPrize = null;
+  @tracked pointsWon = 0;
 
   @tracked wheelAngle = 0;
   @tracked isSpinning = false;
@@ -40,10 +57,10 @@ export default class CheckinPanel extends Component {
   @tracked extraDrawCost = 50;
   @tracked extraDrawsRemaining = 0;
   @tracked userPoints = 0;
+  @tracked accumulatedDraws = 0;
 
   @tracked calendarDates = [];
   @tracked showCalendar = false;
-
   @tracked showConfetti = false;
 
   constructor() {
@@ -59,6 +76,7 @@ export default class CheckinPanel extends Component {
       this.todayCheckin = result.today_checkin;
       this.stats = result.stats;
       this.calendarDates = result.stats?.this_month_dates || [];
+      this.accumulatedDraws = result.accumulated_draws || 0;
 
       const lottery = await ajax("/custom-plugin/checkin/lottery");
       this.canDraw = lottery.can_draw;
@@ -67,6 +85,7 @@ export default class CheckinPanel extends Component {
       this.extraDrawCost = lottery.extra_draw_cost || 50;
       this.extraDrawsRemaining = lottery.extra_draws_remaining || 0;
       this.userPoints = lottery.user_points || 0;
+      this.accumulatedDraws = lottery.accumulated_draws || 0;
     } catch (error) {
       popupAjaxError(error);
     } finally {
@@ -81,6 +100,16 @@ export default class CheckinPanel extends Component {
     return htmlSafe(`transform: rotate(${this.wheelAngle}deg); transition: ${transition};`);
   }
 
+  get wheelPaths() {
+    return WHEEL_SEGMENTS.map((seg, i) => ({
+      d: segmentPath(i, WHEEL_SEGMENTS.length, 148),
+      fill: seg.color,
+      label: seg.label,
+      textColor: seg.textColor,
+      textTransform: textTransform(i, WHEEL_SEGMENTS.length),
+    }));
+  }
+
   @action
   async doCheckin() {
     if (this.isCheckinLoading || this.checkedInToday) return;
@@ -92,6 +121,7 @@ export default class CheckinPanel extends Component {
         this.consecutiveDays = result.consecutive_days;
         this.todayCheckin = result.checkin;
         this.canDraw = true;
+        this.accumulatedDraws = result.accumulated_draws || 1;
       }
     } catch (error) {
       popupAjaxError(error);
@@ -129,8 +159,10 @@ export default class CheckinPanel extends Component {
       const result = await ajax("/custom-plugin/checkin/draw", { type: "POST" });
       if (result.success) {
         this.wonPrize = result.prize;
+        this.pointsWon = result.points_won || 0;
         this.todayPrize = result.prize;
         this.canDraw = false;
+        this.accumulatedDraws = result.accumulated_draws || 0;
         this.showConfetti = true;
         setTimeout(() => { this.showPrizeModal = true; }, 300);
         setTimeout(() => { this.showConfetti = false; }, 3000);
@@ -147,6 +179,7 @@ export default class CheckinPanel extends Component {
       const result = await ajax("/custom-plugin/checkin/extra-draw", { type: "POST" });
       if (result.success) {
         this.wonPrize = result.prize;
+        this.pointsWon = result.points_won || 0;
         this.userPoints = result.remaining_points;
         this.extraDrawsRemaining = result.extra_draws_remaining;
         this.canBuyDraw = this.extraDrawsRemaining > 0 && this.userPoints >= this.extraDrawCost;
@@ -260,7 +293,6 @@ export default class CheckinPanel extends Component {
               <p>{{i18n "custom_plugin.checkin.lottery.description"}}</p>
             </div>
 
-            {{! ===== 转盘抽奖 ===== }}
             <div class="wheel-wrapper">
               <div class="wheel-pointer">
                 <svg viewBox="0 0 40 50" width="30" height="38">
@@ -272,28 +304,16 @@ export default class CheckinPanel extends Component {
                 <div class="wheel-face" style={{this.wheelStyle}}>
                   <svg viewBox="0 0 300 300" class="wheel-svg">
                     <circle cx="150" cy="150" r="148" fill="#1a1a2e" stroke="#FFD700" stroke-width="4"/>
-                    <g>
-                      <path d="M150,150 L150,2 A148,148 0 0,1 254.7,45.3 Z" fill="#F97316"/>
-                      <path d="M150,150 L254.7,45.3 A148,148 0 0,1 298,150 Z" fill="#FEF3C7"/>
-                      <path d="M150,150 L298,150 A148,148 0 0,1 254.7,254.7 Z" fill="#F97316"/>
-                      <path d="M150,150 L254.7,254.7 A148,148 0 0,1 150,298 Z" fill="#FEF3C7"/>
-                      <path d="M150,150 L150,298 A148,148 0 0,1 45.3,254.7 Z" fill="#F97316"/>
-                      <path d="M150,150 L45.3,254.7 A148,148 0 0,1 2,150 Z" fill="#FEF3C7"/>
-                      <path d="M150,150 L2,150 A148,148 0 0,1 45.3,45.3 Z" fill="#F97316"/>
-                      <path d="M150,150 L45.3,45.3 A148,148 0 0,1 150,2 Z" fill="#FEF3C7"/>
-                    </g>
-                    <g font-size="13" font-weight="bold" text-anchor="middle" dominant-baseline="middle">
-                      <text transform="rotate(-67.5,150,150) translate(150,40)" fill="#fff">10 pts</text>
-                      <text transform="rotate(-22.5,150,150) translate(150,40)" fill="#92400E">20 pts</text>
-                      <text transform="rotate(22.5,150,150) translate(150,40)" fill="#fff">50 pts</text>
-                      <text transform="rotate(67.5,150,150) translate(150,40)" fill="#92400E">Lucky!</text>
-                      <text transform="rotate(112.5,150,150) translate(150,40)" fill="#fff">5 pts</text>
-                      <text transform="rotate(157.5,150,150) translate(150,40)" fill="#92400E">30 pts</text>
-                      <text transform="rotate(202.5,150,150) translate(150,40)" fill="#fff">100 pts</text>
-                      <text transform="rotate(247.5,150,150) translate(150,40)" fill="#92400E">Bonus</text>
+                    {{#each this.wheelPaths as |seg|}}
+                      <path d={{seg.d}} fill={{seg.fill}} />
+                    {{/each}}
+                    <g font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="middle">
+                      {{#each this.wheelPaths as |seg|}}
+                        <text transform={{seg.textTransform}} fill={{seg.textColor}}>{{seg.label}}</text>
+                      {{/each}}
                     </g>
                     <circle cx="150" cy="150" r="25" fill="#FFD700" stroke="#fff" stroke-width="3"/>
-                    <text x="150" y="153" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a1a2e">GO</text>
+                    <text x="150" y="153" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a1a2e">SPIN</text>
                   </svg>
                 </div>
               </div>
@@ -337,7 +357,6 @@ export default class CheckinPanel extends Component {
         {{/if}}
       {{/if}}
 
-      {{! ===== 中奖弹窗 ===== }}
       {{#if this.showPrizeModal}}
         <div class="prize-modal-overlay" {{on "click" this.closePrizeModal}}>
           <div class="prize-modal" {{on "click" this.stopPropagation}}>
@@ -351,7 +370,6 @@ export default class CheckinPanel extends Component {
         </div>
       {{/if}}
 
-      {{! ===== 彩纸效果 ===== }}
       {{#if this.showConfetti}}
         <div class="confetti-container">
           <div class="confetti c1"></div>

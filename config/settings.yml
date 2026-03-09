@@ -19,13 +19,22 @@ plugins:
     default: true
     client: true
   checkin_lottery_prizes:
-    default: "10 Points|50 Points|100 Points|Mystery Prize"
+    default: "100 Points|25 Points|5 Points|Better Luck Next Time!|Product Reward"
     type: list
     list_type: simple
   checkin_lottery_probabilities:
-    default: "50|30|15|5"
+    default: "5|15|40|38|2"
     type: list
     list_type: simple
+  checkin_product_reward_name:
+    default: ""
+    client: true
+  checkin_product_reward_image_url:
+    default: ""
+    client: true
+  checkin_weekly_winner_enabled:
+    default: true
+    client: true
   checkin_extra_lottery_cost:
     default: 50
     min: 0

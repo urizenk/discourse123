@@ -1247,6 +1247,270 @@
 }
 
 // ==========================================
+// 顶部板块导航栏 — Principle 原型比例 (1920x1080)
+// 导航栏 189px / 1080 = 17.5vh
+// 卡片 245x140 = 7:4
+// 图标 135x135 = 55% 卡片宽
+// 箭头 50x50
+// ==========================================
+
+.category-nav-bar {
+  width: 100%;
+  height: clamp(120px, 17.5vh, 189px);
+  background: #1a1a1a;
+  position: relative;
+  z-index: 100;
+  overflow: hidden;
+
+  .nav-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .nav-arrow {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+    z-index: 2;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: scale(1.08);
+    }
+  }
+
+  .nav-scroll-area {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .nav-items {
+    display: flex;
+    gap: 10px;
+    padding: 0 4px;
+    height: fit-content;
+  }
+
+  .nav-card {
+    width: clamp(160px, 12.76vw, 245px);
+    aspect-ratio: 7 / 4;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: block;
+
+    &:hover {
+      transform: scale(1.1);
+      z-index: 5;
+    }
+
+    &.rotate-on-hover:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .card-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+
+      &--solid {
+        background: linear-gradient(135deg, #f5e6d3, #e8d5c0);
+      }
+    }
+
+    .card-icon {
+      position: absolute;
+      width: 55%;
+      height: auto;
+      max-height: 70%;
+      object-fit: contain;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      z-index: 1;
+    }
+
+    .card-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 6px 8px;
+      text-align: center;
+      color: #fff;
+      font-size: clamp(10px, 0.65vw, 13px);
+      font-weight: 600;
+      font-family: 'Google Sans', 'Product Sans', system-ui, sans-serif;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
+      z-index: 2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+  }
+}
+
+// ==========================================
+// 板块页面顶部横幅
+// ==========================================
+
+.category-header-banner {
+  max-width: 1600px;
+  margin: 0 auto 20px;
+  padding: 20px 30px;
+  background: linear-gradient(135deg, #fdf8f0 0%, #f5ebe0 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .banner-icon {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .banner-text {
+    flex: 1;
+
+    .banner-title {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'Google Sans', 'Product Sans', system-ui, sans-serif;
+      color: var(--primary);
+      margin: 0 0 4px;
+    }
+
+    .banner-description {
+      font-size: 16px;
+      color: var(--primary-medium);
+      margin: 0 0 6px;
+    }
+
+    .banner-link {
+      font-size: 14px;
+      color: var(--tertiary);
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// ==========================================
+// 精确页面布局 — 1600px 最大宽度
+// ==========================================
+
+.custom-page-layout {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  gap: 20px;
+  padding: 0 16px;
+
+  .sidebar-left {
+    width: 270px;
+    flex-shrink: 0;
+  }
+
+  .content-right {
+    flex: 1;
+    min-width: 0;
+    max-width: 1279px;
+  }
+}
+
+// ==========================================
+// 帖子卡片封面比例
+// ==========================================
+
+.topic-card .card-image {
+  overflow: hidden;
+  border-radius: 8px 8px 0 0;
+
+  img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  &.ratio-1-1 {
+    aspect-ratio: 1 / 1;
+  }
+
+  &.ratio-3-4 {
+    aspect-ratio: 3 / 4;
+  }
+}
+
+// ==========================================
+// 新话题对话框 z-index 修复
+// ==========================================
+
+.d-editor-modal,
+.composer-popup,
+#reply-control {
+  z-index: 1050 !important;
+}
+
+.modal-backdrop,
+.d-modal {
+  z-index: 1040 !important;
+}
+
+// ==========================================
+// 全局字体
+// ==========================================
+
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap');
+
+// ==========================================
 // 响应式适配
 // ==========================================
 
@@ -1289,6 +1553,83 @@
   .badge-card .badge-icon {
     width: 48px;
     height: 48px;
+  }
+
+  .category-nav-bar {
+    height: clamp(90px, 15vh, 140px);
+
+    .nav-arrow {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      font-size: 22px;
+    }
+
+    .nav-card {
+      width: clamp(130px, 25vw, 180px);
+    }
+  }
+
+  .category-header-banner {
+    padding: 16px 20px;
+    flex-direction: column;
+    text-align: center;
+
+    .banner-icon {
+      width: 48px;
+      height: 48px;
+    }
+
+    .banner-text {
+      .banner-title { font-size: 18px; }
+      .banner-description { font-size: 14px; }
+    }
+  }
+
+  .custom-page-layout {
+    flex-direction: column;
+
+    .sidebar-left {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+
+  .category-nav-bar {
+    height: clamp(80px, 14vh, 120px);
+
+    .nav-inner {
+      padding: 0 4px;
+      gap: 4px;
+    }
+
+    .nav-arrow {
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      font-size: 18px;
+    }
+
+    .nav-card {
+      width: clamp(100px, 30vw, 150px);
+
+      .card-label {
+        font-size: 9px;
+        padding: 4px 6px;
+      }
+    }
+  }
+
+  .category-header-banner {
+    padding: 12px 16px;
+    border-radius: 8px;
+
+    .banner-text {
+      .banner-title { font-size: 16px; }
+      .banner-description { font-size: 13px; }
+    }
   }
 }
 
@@ -1377,6 +1718,51 @@
 .todo-checkbox.readonly {
   cursor: default;
   opacity: 0.7;
+}
+
+// ==========================================
+// 用户卡片快速链接按钮
+// ==========================================
+.user-card-quick-links {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  .user-card-link-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--primary-very-low);
+    border: 1px solid var(--primary-low);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--primary);
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--primary-low);
+      border-color: var(--tertiary);
+    }
+
+    .link-icon {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+
+    .link-count {
+      margin-left: auto;
+      background: var(--tertiary);
+      color: #fff;
+      border-radius: 10px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+  }
 }
 
 // ==========================================

@@ -10,6 +10,7 @@ en:
       tabs:
         checkin: "Daily Check-in"
         todo: "To Do List"
+        collection: "My Collection"
         badges: "Badge Wall"
         emoji: "My Emoji"
 
@@ -24,16 +25,17 @@ en:
         stat_points: "Points"
         stat_month: "This Month"
         lottery:
-          title: "Lucky Draw"
-          button: "Draw Now"
-          drawing: "Drawing..."
-          description: "Get a chance to draw after check-in"
-          no_chance: "No chance available"
+          title: "Spin & WIN"
+          button: "Spin Now!"
+          drawing: "Spinning..."
+          description: "Check in daily to earn a spin!"
+          no_chance: "No spins available"
           won: "Won: %{prize}"
           congratulations: "Congratulations!"
-          ok: "OK"
-          extra_draw: "Extra Draw (-%{cost} pts)"
-          extra_info: "Spend %{cost} points for extra draw (%{remaining} left)"
+          ok: "Awesome!"
+          extra_draw: "Extra Spin (-%{cost} pts)"
+          extra_info: "Spend %{cost} points for an extra spin (%{remaining} left)"
+          product_won: "You won a product reward!"
         calendar:
           title: "Calendar"
           hide: "Hide"
@@ -48,7 +50,7 @@ en:
         pending: "Pending"
         tabs:
           todo: "To Do List"
-          wish: "Wish List"
+          wish: "My Collection"
         priority:
           important: "Important"
           urgent: "Urgent"
@@ -77,3 +79,18 @@ en:
       user_card:
         badge_wall: "Badge Wall"
         todo_list: "To Do List"
+        collection: "My Collection"
+
+      nav_bar:
+        user_guide: "User Guide & Perks"
+        say_hi: "Say Hi To Everyone"
+        spin_win: "Spin & WIN"
+        showcase: "Showcase & Story"
+        diy: "DIY & Crafting Club"
+        nanci: "Nanci's Diary"
+        new_arrivals: "New Arrivals"
+        exclusive: "Exclusive Deals"
+        assembly: "Assembly Guide & FAQ"
+
+      category_header:
+        learn_more: "Click Here to Learn More"

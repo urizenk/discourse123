@@ -10,6 +10,7 @@
 enabled_site_setting :custom_plugin_enabled
 
 register_asset "stylesheets/custom-plugin.scss"
+register_svg_icon "gift" if respond_to?(:register_svg_icon)
 
 module ::DiscourseCustomPlugin
   PLUGIN_NAME = "discourse-custom-plugin"

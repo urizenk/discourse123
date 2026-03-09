@@ -1,14 +1,19 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
+import { on } from "@ember/modifier";
+import { fn } from "@ember/helper";
+import { action } from "@ember/object";
 import i18n from "discourse-common/helpers/i18n";
 
 export default class UserCardBadges extends Component {
   @tracked isLoading = true;
   @tracked badges = [];
   @tracked todos = [];
+  @tracked collections = [];
 
   get userId() { return this.args.outletArgs?.user?.id; }
+  get username() { return this.args.outletArgs?.user?.username; }
 
   constructor() {
     super(...arguments);
@@ -22,10 +27,20 @@ export default class UserCardBadges extends Component {
 
       const todoResult = await ajax(`/custom-plugin/todos?user_id=${this.userId}&type=todo`);
       this.todos = (todoResult.todos || []).slice(0, 3);
+
+      const collResult = await ajax(`/custom-plugin/todos?user_id=${this.userId}&type=wish`);
+      this.collections = (collResult.todos || []).slice(0, 3);
     } catch {
-      // silently fail for user card popup
+      // silently fail
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  @action
+  goToProfile(tab) {
+    if (this.username) {
+      window.location.href = `/u/${this.username}/activity`;
     }
   }
 
@@ -35,6 +50,33 @@ export default class UserCardBadges extends Component {
         {{#if this.isLoading}}
           <div class="loading-text">{{i18n "custom_plugin.loading"}}</div>
         {{else}}
+          <div class="user-card-quick-links">
+            <button
+              class="user-card-link-btn"
+              type="button"
+              title={{i18n "custom_plugin.user_card.collection"}}
+              {{on "click" (fn this.goToProfile "collection")}}
+            >
+              <img src="/plugins/discourse-custom-plugin/images/icon-collection.png" alt="" class="link-icon" />
+              <span>{{i18n "custom_plugin.user_card.collection"}}</span>
+              {{#if this.collections.length}}
+                <span class="link-count">{{this.collections.length}}</span>
+              {{/if}}
+            </button>
+            <button
+              class="user-card-link-btn"
+              type="button"
+              title={{i18n "custom_plugin.user_card.todo_list"}}
+              {{on "click" (fn this.goToProfile "todo")}}
+            >
+              <img src="/plugins/discourse-custom-plugin/images/icon-todo.png" alt="" class="link-icon" />
+              <span>{{i18n "custom_plugin.user_card.todo_list"}}</span>
+              {{#if this.todos.length}}
+                <span class="link-count">{{this.todos.length}}</span>
+              {{/if}}
+            </button>
+          </div>
+
           {{#if this.badges.length}}
             <div class="user-card-badges">
               <h4>{{i18n "custom_plugin.user_card.badge_wall"}}</h4>
@@ -51,20 +93,6 @@ export default class UserCardBadges extends Component {
                   </div>
                 {{/each}}
               </div>
-            </div>
-          {{/if}}
-
-          {{#if this.todos.length}}
-            <div class="user-card-todos">
-              <h4>{{i18n "custom_plugin.user_card.todo_list"}}</h4>
-              <ul class="todo-mini-list">
-                {{#each this.todos as |todo|}}
-                  <li class="{{if todo.completed 'completed'}}">
-                    <span class="check-icon">{{if todo.completed "✓" "○"}}</span>
-                    {{todo.title}}
-                  </li>
-                {{/each}}
-              </ul>
             </div>
           {{/if}}
         {{/if}}

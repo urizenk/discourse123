@@ -10,6 +10,7 @@ zh_CN:
       tabs:
         checkin: "每日签到"
         todo: "待办清单"
+        collection: "我的收藏"
         badges: "徽章墙"
         emoji: "我的表情包"
 
@@ -24,16 +25,17 @@ zh_CN:
         stat_points: "总积分"
         stat_month: "本月"
         lottery:
-          title: "幸运抽奖"
+          title: "幸运转盘"
           button: "立即抽奖"
           drawing: "抽奖中..."
-          description: "签到后获得一次抽奖机会"
+          description: "每日签到获得抽奖机会！"
           no_chance: "暂无抽奖机会"
           won: "恭喜获得：%{prize}"
           congratulations: "恭喜中奖！"
-          ok: "确定"
+          ok: "太棒了！"
           extra_draw: "额外抽奖 (-%{cost} 积分)"
           extra_info: "消耗 %{cost} 积分进行额外抽奖（剩余 %{remaining} 次）"
+          product_won: "恭喜获得产品奖励！"
         calendar:
           title: "签到日历"
           hide: "收起"
@@ -48,7 +50,7 @@ zh_CN:
         pending: "待完成"
         tabs:
           todo: "待办清单"
-          wish: "愿望清单"
+          wish: "我的收藏"
         priority:
           important: "重要"
           urgent: "紧急"
@@ -77,3 +79,18 @@ zh_CN:
       user_card:
         badge_wall: "徽章墙"
         todo_list: "待办清单"
+        collection: "我的收藏"
+
+      nav_bar:
+        user_guide: "使用指南"
+        say_hi: "打个招呼"
+        spin_win: "幸运转盘"
+        showcase: "展示与故事"
+        diy: "DIY手作俱乐部"
+        nanci: "南希日记"
+        new_arrivals: "新品上架"
+        exclusive: "专属优惠"
+        assembly: "拼装指南"
+
+      category_header:
+        learn_more: "点击了解更多"

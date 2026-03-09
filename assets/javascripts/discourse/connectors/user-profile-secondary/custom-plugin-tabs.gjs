@@ -15,7 +15,7 @@ export default class CustomPluginTabs extends Component {
   @service router;
   @service currentUser;
 
-  @tracked activeTab = "badges";
+  @tracked activeTab = "collection";
   @tracked isCollapsed = false;
 
   get isOwnProfile() {
@@ -39,6 +39,16 @@ export default class CustomPluginTabs extends Component {
       {{#unless this.isCollapsed}}
         <div class="custom-plugin-tabs">
           <div class="tabs-nav">
+            <button
+              type="button"
+              class="tab {{if (eq this.activeTab 'collection') 'active'}}"
+              {{on "click" (fn this.setTab "collection")}}
+            >{{i18n "custom_plugin.tabs.collection"}}</button>
+            <button
+              type="button"
+              class="tab {{if (eq this.activeTab 'todo') 'active'}}"
+              {{on "click" (fn this.setTab "todo")}}
+            >{{i18n "custom_plugin.tabs.todo"}}</button>
             {{#if this.isOwnProfile}}
               <button
                 type="button"
@@ -46,11 +56,6 @@ export default class CustomPluginTabs extends Component {
                 {{on "click" (fn this.setTab "checkin")}}
               >{{i18n "custom_plugin.tabs.checkin"}}</button>
             {{/if}}
-            <button
-              type="button"
-              class="tab {{if (eq this.activeTab 'todo') 'active'}}"
-              {{on "click" (fn this.setTab "todo")}}
-            >{{i18n "custom_plugin.tabs.todo"}}</button>
             <button
               type="button"
               class="tab {{if (eq this.activeTab 'badges') 'active'}}"
@@ -66,10 +71,12 @@ export default class CustomPluginTabs extends Component {
           </div>
 
           <div class="tab-content">
-            {{#if (eq this.activeTab "checkin")}}
-              <CheckinPanel />
+            {{#if (eq this.activeTab "collection")}}
+              <TodoPanel @userId={{this.profileUserId}} @isOwner={{this.isOwnProfile}} @defaultTab="wish" />
             {{else if (eq this.activeTab "todo")}}
-              <TodoPanel @userId={{this.profileUserId}} @isOwner={{this.isOwnProfile}} />
+              <TodoPanel @userId={{this.profileUserId}} @isOwner={{this.isOwnProfile}} @defaultTab="todo" />
+            {{else if (eq this.activeTab "checkin")}}
+              <CheckinPanel />
             {{else if (eq this.activeTab "badges")}}
               <BadgeWall @userId={{this.profileUserId}} />
             {{else if (eq this.activeTab "emoji")}}

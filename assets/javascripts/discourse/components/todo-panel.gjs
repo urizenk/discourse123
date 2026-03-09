@@ -12,7 +12,7 @@ import I18n from "discourse-i18n";
 export default class TodoPanel extends Component {
   @tracked isLoading = true;
   @tracked todos = [];
-  @tracked activeTab = "todo";
+  @tracked activeTab = null;
   @tracked newTodoTitle = "";
   @tracked newTodoImageUrl = "";
   @tracked isUploading = false;
@@ -23,6 +23,7 @@ export default class TodoPanel extends Component {
 
   constructor() {
     super(...arguments);
+    this.activeTab = this.args.defaultTab || "todo";
     this.loadTodos();
   }
 

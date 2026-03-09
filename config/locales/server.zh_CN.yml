@@ -7,6 +7,9 @@ zh_CN:
     checkin_lottery_enabled: "启用签到抽奖功能"
     checkin_lottery_prizes: "抽奖奖品列表（用|分隔）"
     checkin_lottery_probabilities: "抽奖概率列表（用|分隔，总和应为100）"
+    checkin_product_reward_name: "产品奖励名称"
+    checkin_product_reward_image_url: "产品奖励图片URL"
+    checkin_weekly_winner_enabled: "启用每周保底中奖"
     checkin_extra_lottery_cost: "额外抽奖所需积分"
     checkin_max_extra_lottery_per_day: "每日最大额外抽奖次数"
     todo_enabled: "启用待办清单功能"
@@ -24,6 +27,10 @@ zh_CN:
       consecutive_bonus: "连续签到 %{days} 天，额外获得 %{bonus} 积分"
       lottery_win: "恭喜您抽中了：%{prize}"
       lottery_no_chance: "今天的抽奖机会已用完"
+      product_win_title: "恭喜！您赢得了产品奖励！"
+      product_win_body: "你好 @%{username}，恭喜！您在幸运转盘中赢得了 **%{product}**！我们的团队将会联系您安排发货。感谢您参与我们的社区！"
+      admin_notify_title: "幸运转盘产品中奖提醒"
+      admin_notify_body: "用户 @%{username} 在幸运转盘中赢得了产品奖励 **%{product}**，请安排发货。"
 
     todo:
       created: "待办事项已创建"
