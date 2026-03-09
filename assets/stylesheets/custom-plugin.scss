@@ -1247,20 +1247,17 @@
 }
 
 // ==========================================
-// 顶部板块导航栏 — Principle 原型比例 (1920x1080)
-// 导航栏 189px / 1080 = 17.5vh
-// 卡片 245x140 = 7:4
-// 图标 135x135 = 55% 卡片宽
-// 箭头 50x50
+// 顶部板块导航栏 — 匹配 community.robotime.com
+// 白色背景，图片铺满卡片，接近正方形
 // ==========================================
 
 .category-nav-bar {
   width: 100%;
-  height: clamp(120px, 17.5vh, 189px);
-  background: #1a1a1a;
+  background: #fff;
   position: relative;
   z-index: 100;
-  overflow: hidden;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
 
   .nav-inner {
     max-width: 1600px;
@@ -1268,19 +1265,19 @@
     height: 100%;
     display: flex;
     align-items: center;
-    padding: 0 8px;
-    gap: 6px;
+    padding: 0 12px;
+    gap: 8px;
   }
 
   .nav-arrow {
-    width: 50px;
-    height: 50px;
-    min-width: 50px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
     border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    background: #333;
     color: #fff;
-    font-size: 28px;
+    font-size: 22px;
     line-height: 1;
     cursor: pointer;
     display: flex;
@@ -1289,11 +1286,11 @@
     transition: all 0.25s ease;
     flex-shrink: 0;
     z-index: 2;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
     &:hover {
-      background: rgba(255, 255, 255, 0.18);
-      border-color: rgba(255, 255, 255, 0.6);
-      transform: scale(1.08);
+      background: #555;
+      transform: scale(1.1);
     }
   }
 
@@ -1303,7 +1300,6 @@
     overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    height: 100%;
     display: flex;
     align-items: center;
 
@@ -1314,15 +1310,14 @@
 
   .nav-items {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     padding: 0 4px;
-    height: fit-content;
   }
 
   .nav-card {
-    width: clamp(160px, 12.76vw, 245px);
-    aspect-ratio: 7 / 4;
-    border-radius: 12px;
+    width: clamp(120px, 10vw, 160px);
+    aspect-ratio: 4 / 5;
+    border-radius: 16px;
     overflow: hidden;
     position: relative;
     flex-shrink: 0;
@@ -1330,14 +1325,16 @@
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     display: block;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     &:hover {
-      transform: scale(1.1);
+      transform: scale(1.08);
       z-index: 5;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
     }
 
     &.rotate-on-hover:hover {
-      transform: scale(1.1) rotate(5deg);
+      transform: scale(1.08) rotate(3deg);
     }
 
     .card-bg {
@@ -1347,22 +1344,19 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 12px;
 
       &--solid {
-        background: linear-gradient(135deg, #f5e6d3, #e8d5c0);
+        background: linear-gradient(135deg, #fdf6ec, #f5e6d3);
       }
     }
 
     .card-icon {
       position: absolute;
-      width: 55%;
-      height: auto;
-      max-height: 70%;
-      object-fit: contain;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -55%);
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      top: 0;
+      left: 0;
       z-index: 1;
     }
 
@@ -1371,18 +1365,18 @@
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 6px 8px;
+      padding: 8px 6px;
       text-align: center;
       color: #fff;
-      font-size: clamp(10px, 0.65vw, 13px);
-      font-weight: 600;
+      font-size: clamp(10px, 0.7vw, 13px);
+      font-weight: 700;
       font-family: 'Roboto', system-ui, sans-serif;
-      background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
+      background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.6) 100%);
       z-index: 2;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
     }
   }
 }
@@ -1556,17 +1550,17 @@
   }
 
   .category-nav-bar {
-    height: clamp(90px, 15vh, 140px);
+    padding: 8px 0;
 
     .nav-arrow {
-      width: 36px;
-      height: 36px;
-      min-width: 36px;
-      font-size: 22px;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      font-size: 18px;
     }
 
     .nav-card {
-      width: clamp(130px, 25vw, 180px);
+      width: clamp(100px, 22vw, 140px);
     }
   }
 
@@ -1598,7 +1592,7 @@
 @media (max-width: 480px) {
 
   .category-nav-bar {
-    height: clamp(80px, 14vh, 120px);
+    padding: 6px 0;
 
     .nav-inner {
       padding: 0 4px;
@@ -1606,14 +1600,14 @@
     }
 
     .nav-arrow {
-      width: 30px;
-      height: 30px;
-      min-width: 30px;
-      font-size: 18px;
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      font-size: 16px;
     }
 
     .nav-card {
-      width: clamp(100px, 30vw, 150px);
+      width: clamp(80px, 25vw, 110px);
 
       .card-label {
         font-size: 9px;
