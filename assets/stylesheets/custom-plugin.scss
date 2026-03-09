@@ -1613,10 +1613,13 @@
 }
 
 // ==========================================
-// 5. Discourse 默认侧栏美化
+// 5. Discourse 侧栏 — 只保留 Quick Links，隐藏默认段
 // ==========================================
 
 #d-sidebar {
+  width: 200px !important;
+  padding-top: 16px;
+
   .sidebar-sections {
     background: #fff;
     border-radius: 12px;
@@ -1624,13 +1627,20 @@
     padding: 4px 0;
   }
 
-  .sidebar-section-header-wrapper {
-    .sidebar-section-header-text {
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #999;
+  // 隐藏默认的 community / categories / messages / channels 段
+  .sidebar-section[data-section-name="community"],
+  .sidebar-section[data-section-name="categories"],
+  .sidebar-section[data-section-name="messages"],
+  .sidebar-section[data-section-name="channels"],
+  .sidebar-section[data-section-name="chat-dms"],
+  .sidebar-section[data-section-name="chat-channels"] {
+    display: none !important;
+  }
+
+  // Quick Links 段标题隐藏（不需要"QUICK LINKS"文字）
+  .sidebar-section[data-section-name="custom-quick-links"] {
+    .sidebar-section-header-wrapper {
+      display: none;
     }
   }
 
@@ -1666,7 +1676,11 @@
   }
 
   .sidebar-footer-wrapper {
-    display: none;
+    display: none !important;
+  }
+
+  .sidebar-filter {
+    display: none !important;
   }
 }
 
@@ -1681,7 +1695,20 @@ body {
 #main-outlet {
   max-width: 1600px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 16px 24px;
+}
+
+// 隐藏首页欢迎横幅和搜索框
+.welcome-topic-banner,
+.custom-search-banner,
+.search-banner,
+.d-home-custom-search {
+  display: none !important;
+}
+
+// below-site-header 出口内的导航栏需要全宽
+.below-site-header-outlet {
+  width: 100%;
 }
 
 // ==========================================
@@ -1862,16 +1889,9 @@ body {
     }
   }
 
-  // 侧栏：Discourse 默认在移动端隐藏，保持一致
+  // 侧栏：移动端隐藏
   #d-sidebar {
-    .sidebar-sections {
-      border-radius: 8px;
-      margin: 0 8px 12px;
-    }
-  }
-
-  .custom-sidebar-menu {
-    display: none;
+    display: none !important;
   }
 
   // 主内容区边距
