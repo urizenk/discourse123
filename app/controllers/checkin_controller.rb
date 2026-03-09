@@ -217,6 +217,10 @@ module DiscourseCustomPlugin
     end
 
     def perform_lottery
+      if should_force_weekly_product_winner?
+        return product_prize_label
+      end
+
       prizes = SiteSetting.checkin_lottery_prizes.split("|")
       probabilities = SiteSetting.checkin_lottery_probabilities.split("|").map(&:to_i)
 
@@ -230,6 +234,45 @@ module DiscourseCustomPlugin
       end
 
       prizes.last
+    end
+
+    def should_force_weekly_product_winner?
+      return false unless SiteSetting.checkin_weekly_winner_enabled
+
+      week_start = Date.current.beginning_of_week
+      week_end = Date.current.end_of_week
+      today = Date.current
+      day_of_week = today.cwday # 1=Mon, 7=Sun
+
+      return false if product_winner_this_week?(week_start, week_end)
+
+      # Escalating probability: Mon-Thu 5%, Fri 20%, Sat 50%, Sun 100%
+      force_chance = case day_of_week
+                     when 1..4 then 5
+                     when 5 then 20
+                     when 6 then 50
+                     when 7 then 100
+                     else 5
+                     end
+
+      rand(100) < force_chance
+    end
+
+    def product_winner_this_week?(week_start, week_end)
+      product_label = product_prize_label
+      UserCheckin
+        .where(checked_in_at: week_start.beginning_of_day..week_end.end_of_day)
+        .where(lottery_prize: product_label)
+        .exists? ||
+      ExtraLotteryRecord
+        .where(created_at: week_start.beginning_of_day..week_end.end_of_day)
+        .where(prize: product_label)
+        .exists?
+    end
+
+    def product_prize_label
+      prizes = SiteSetting.checkin_lottery_prizes.split("|")
+      prizes.find { |p| p.downcase.include?("product") } || "Product Reward"
     end
 
     def extract_points(prize)
