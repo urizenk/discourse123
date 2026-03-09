@@ -1554,6 +1554,7 @@
           color: var(--primary);
           display: -webkit-box;
           -webkit-line-clamp: 2;
+          line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
           text-decoration: none;
@@ -1810,49 +1811,108 @@ body {
 // 响应式适配
 // ==========================================
 
+// -- 平板横屏 / 小桌面 --
 @media (max-width: 1100px) {
   .topic-list {
     grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+
+  .category-nav-bar .nav-card {
+    width: clamp(105px, 14vw, 140px);
   }
 }
 
+// -- 平板竖屏 / 大手机横屏 --
 @media (max-width: 768px) {
+  // 话题列表：单列卡片
   .topic-list {
     grid-template-columns: 1fr !important;
+    gap: 12px;
+    padding: 0 !important;
   }
 
-  .custom-plugin-container {
-    margin: 12px 0;
+  // 黑色顶栏：缩小 logo，链接隐藏交给 Discourse 汉堡菜单
+  .d-header-wrap .d-header {
+    .d-header-icons .icon { margin-left: 4px; }
+    .logo-big, .logo-small { max-height: 28px; }
   }
+
+  // 黄色分类导航栏：缩小卡片和箭头
+  .category-nav-bar {
+    padding: 6px 0;
+
+    .nav-inner { padding: 0 6px; gap: 4px; }
+
+    .nav-arrow {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      font-size: 16px;
+    }
+
+    .nav-card {
+      width: clamp(90px, 24vw, 120px);
+      border-radius: 10px;
+
+      .card-label {
+        font-size: 10px;
+        padding: 4px;
+      }
+    }
+  }
+
+  // 侧栏：Discourse 默认在移动端隐藏，保持一致
+  #d-sidebar {
+    .sidebar-sections {
+      border-radius: 8px;
+      margin: 0 8px 12px;
+    }
+  }
+
+  .custom-sidebar-menu {
+    display: none;
+  }
+
+  // 主内容区边距
+  #main-outlet {
+    padding: 8px;
+  }
+
+  // 各面板缩小内边距
+  .custom-plugin-container { margin: 12px 0; }
 
   .custom-plugin-tabs {
-    padding: 16px;
+    padding: 14px;
     border-radius: 8px;
 
     .tabs-nav {
       gap: 6px;
-      margin-bottom: 16px;
-
-      .tab {
-        padding: 8px 14px;
-        font-size: 13px;
-      }
+      margin-bottom: 14px;
+      .tab { padding: 8px 12px; font-size: 13px; }
     }
   }
 
   .checkin-panel,
   .todo-panel,
   .custom-emoji-panel {
-    padding: 16px;
+    padding: 14px;
+    border-radius: 10px;
   }
 
   .checkin-stats {
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .lottery-panel {
+    padding: 16px;
+    .wheel-outer { width: 200px; height: 200px; }
   }
 
   .badge-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 10px;
   }
 
   .badge-card .badge-icon {
@@ -1860,30 +1920,13 @@ body {
     height: 48px;
   }
 
-  .category-nav-bar {
-    padding: 6px 0;
-
-    .nav-arrow {
-      width: 30px;
-      height: 30px;
-      min-width: 30px;
-      font-size: 18px;
-    }
-
-    .nav-card {
-      width: clamp(100px, 24vw, 130px);
-    }
-  }
-
   .category-header-banner {
-    padding: 16px 20px;
+    padding: 14px 16px;
     flex-direction: column;
     text-align: center;
+    border-radius: 8px;
 
-    .banner-icon {
-      width: 48px;
-      height: 48px;
-    }
+    .banner-icon { width: 48px; height: 48px; }
 
     .banner-text {
       .banner-title { font-size: 18px; }
@@ -1893,51 +1936,210 @@ body {
 
   .custom-page-layout {
     flex-direction: column;
+    gap: 12px;
+    padding: 0 8px;
 
-    .sidebar-left {
-      width: 100%;
-    }
+    .sidebar-left { width: 100%; }
   }
 
-  .custom-sidebar-menu {
-    display: none;
+  // 中奖弹窗
+  .prize-modal {
+    padding: 24px;
+    max-width: 300px;
+
+    h3 { font-size: 22px; }
+    .prize-display { font-size: 28px; padding: 14px; }
+    button { padding: 12px 30px; font-size: 16px; }
+  }
+
+  // 用户卡片
+  .user-card-custom-section {
+    padding: 10px 12px;
+  }
+
+  .user-card-quick-links {
+    flex-direction: column;
+    gap: 6px;
   }
 }
 
+// -- 手机竖屏 --
 @media (max-width: 480px) {
+  // 黄色导航栏：更小
   .category-nav-bar {
     padding: 4px 0;
 
-    .nav-inner {
-      padding: 0 4px;
-      gap: 4px;
-    }
+    .nav-inner { padding: 0 4px; gap: 3px; }
 
     .nav-arrow {
-      width: 26px;
-      height: 26px;
-      min-width: 26px;
-      font-size: 15px;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      font-size: 14px;
     }
 
     .nav-card {
-      width: clamp(80px, 26vw, 110px);
+      width: clamp(75px, 28vw, 100px);
+      border-radius: 8px;
+      aspect-ratio: 1 / 1;
 
       .card-label {
         font-size: 9px;
-        padding: 3px 4px;
+        padding: 3px 2px;
       }
+    }
+
+    .nav-items { gap: 6px; }
+  }
+
+  // 话题卡片细节
+  .topic-list .topic-list-item {
+    border-radius: 8px;
+
+    td.main-link {
+      .link-top-line {
+        padding: 8px 10px 3px;
+        .title { font-size: 13px; }
+      }
+      .link-bottom-line {
+        padding: 3px 10px 8px;
+        font-size: 11px;
+      }
+    }
+
+    .topic-thumbnail { aspect-ratio: 16 / 9; }
+  }
+
+  // 主内容区
+  #main-outlet { padding: 4px; }
+
+  // 签到面板
+  .checkin-panel {
+    padding: 12px;
+
+    .checkin-header h3 { font-size: 16px; }
+    .checkin-button { padding: 12px; font-size: 14px; }
+
+    .checkin-stats {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+
+      .stat-item {
+        padding: 8px;
+        .stat-value { font-size: 20px; }
+        .stat-label { font-size: 11px; }
+      }
+    }
+
+    .checkin-calendar {
+      padding: 10px;
+      .day-cell { font-size: 11px; }
     }
   }
 
-  .category-header-banner {
-    padding: 12px 16px;
-    border-radius: 8px;
+  // 抽奖面板
+  .lottery-panel {
+    padding: 14px;
+    .lottery-header h4 { font-size: 16px; }
+    .lottery-button { font-size: 15px; padding: 12px; }
+    .wheel-outer { width: 180px; height: 180px; }
+  }
 
-    .banner-text {
-      .banner-title { font-size: 16px; }
-      .banner-description { font-size: 13px; }
+  // ToDo
+  .todo-panel {
+    padding: 12px;
+
+    .todo-input {
+      flex-direction: column;
+      input { font-size: 13px; }
+      button:not(.upload-btn) { padding: 10px; font-size: 13px; }
     }
+
+    .todo-item {
+      padding: 10px;
+      .todo-title { font-size: 13px; }
+    }
+  }
+
+  // 徽章
+  .badge-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .badge-card {
+    padding: 10px;
+    .badge-icon { width: 40px; height: 40px; }
+    .badge-name { font-size: 11px; }
+  }
+
+  // 表情
+  .custom-emoji-panel {
+    padding: 12px;
+    .emoji-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
+    .emoji-upload { padding: 20px; }
+  }
+
+  // Tabs
+  .custom-plugin-tabs {
+    padding: 12px;
+    .tabs-nav {
+      .tab { padding: 6px 10px; font-size: 12px; }
+    }
+  }
+
+  // 横幅
+  .category-header-banner {
+    padding: 10px 12px;
+    .banner-text {
+      .banner-title { font-size: 15px; }
+      .banner-description { font-size: 12px; }
+    }
+  }
+
+  // 中奖弹窗
+  .prize-modal {
+    padding: 20px;
+    max-width: 280px;
+    border-radius: 14px;
+
+    h3 { font-size: 20px; margin-bottom: 14px; }
+    .prize-display { font-size: 24px; padding: 12px; margin-bottom: 20px; }
+    button { padding: 10px 24px; font-size: 14px; }
+  }
+
+  // 表情选择器
+  .custom-emoji-picker-modal .custom-emoji-picker-content {
+    max-width: 320px;
+    .picker-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      .picker-emoji { width: 40px; height: 40px; }
+    }
+  }
+}
+
+// -- 超小屏幕 --
+@media (max-width: 360px) {
+  .category-nav-bar {
+    .nav-arrow { display: none; }
+    .nav-card {
+      width: clamp(70px, 30vw, 90px);
+      .card-label { font-size: 8px; }
+    }
+  }
+
+  .topic-list .topic-list-item td.main-link {
+    .link-top-line .title { font-size: 12px; -webkit-line-clamp: 1; line-clamp: 1; }
+    .link-bottom-line { font-size: 10px; }
+  }
+
+  .checkin-panel .checkin-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .badge-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
